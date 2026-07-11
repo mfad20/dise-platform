@@ -21,14 +21,15 @@ def index():
     if not current_user.is_authenticated and not session.get("entree_choisie"):
         return render_template("entree.html")
 
-    nb_alumni = User.query.filter(User.role.in_(["alumni"])).count()
+    # Alumni, promotions et pays représentés : chiffres officiels de la
+    # division depuis sa création, pas un comptage des seuls comptes déjà
+    # inscrits sur la plateforme (encore naissante) — sinon la page
+    # d'accueil sous-représenterait largement la communauté réelle de la DISE.
+    nb_alumni = 1200
+    nb_promotions = 37
+    nb_pays = 17
+
     nb_etudiants = User.query.filter_by(role="etudiant").count()
-    nb_promotions = db.session.query(User.promotion).filter(
-        User.promotion.isnot(None)
-    ).distinct().count()
-    nb_pays = db.session.query(User.pays_residence).filter(
-        User.pays_residence.isnot(None), User.pays_residence != ""
-    ).distinct().count()
     nb_entreprises = db.session.query(User.entreprise).filter(
         User.entreprise.isnot(None), User.entreprise != ""
     ).distinct().count()
