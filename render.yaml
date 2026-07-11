@@ -4,7 +4,10 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT run:app
+    # 1 worker : SQLite ne gère pas bien les écritures concurrentes, et un
+    # seul process évite toute course entre workers au premier démarrage
+    # (auto-seed si la base est vide, voir app/__init__.py).
+    startCommand: gunicorn -w 1 -b 0.0.0.0:$PORT run:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.7

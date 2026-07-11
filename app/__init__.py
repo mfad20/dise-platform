@@ -7,7 +7,7 @@ from config import Config
 from app.extensions import db, login_manager, csrf
 
 
-def create_app(config_class=Config):
+def create_app(config_class=Config, auto_seed=True):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -89,6 +89,15 @@ def create_app(config_class=Config):
 
     with app.app_context():
         db.create_all()
+        # Auto-peuplement : utile sur un hébergement à disque éphémère (ex.
+        # Render free tier, sans accès shell) où la base repart à zéro à
+        # chaque déploiement. Ne s'exécute que si la base est réellement
+        # vide, donc sans risque pour de vraies données déjà en place.
+        if auto_seed:
+            from app.models import User
+            if User.query.count() == 0:
+                from seed_data import populate
+                populate()
 
     @app.errorhandler(400)
     def bad_request(e):
