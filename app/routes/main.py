@@ -91,16 +91,14 @@ def la_dise():
         User.fonction_actuelle.isnot(None)
     ).order_by(User.id.desc()).limit(6).all()
 
-    # Photos officielles du Bureau 2025-2026 (fournies par l'utilisateur).
-    # Aucun nom n'est inventé : seule la fonction est affichée, les noms
-    # réels devront être complétés par le Bureau lors de la mise en ligne.
+    # Photos et noms officiels du Bureau 2025-2026 (fournis par l'utilisateur).
     bureau_officiel = [
         {"role": "Président de la DISE", "nom": "N'Dré Lébé", "photo": "bureau/president_dise_2025_2026.jpeg"},
-        {"role": "Vice-Président", "photo": "bureau/Vice_president.jpeg"},
-        {"role": "Secrétaire Général", "photo": "bureau/secretaire_general.jpeg"},
-        {"role": "Secrétaire Générale Adjointe", "photo": "bureau/secretaire_adjointe.jpeg"},
-        {"role": "Trésorière Générale", "photo": "bureau/tresoriere_principale.jpeg"},
-        {"role": "Trésorière Adjointe", "photo": "bureau/tresoriere_adjointe.jpeg"},
+        {"role": "Vice-Président", "nom": "Ouedraogo Boubacar", "photo": "bureau/Vice_president.jpeg"},
+        {"role": "Secrétaire Général", "nom": "Barry Alpha Dariou", "photo": "bureau/secretaire_general.jpeg"},
+        {"role": "Secrétaire Général Adjoint", "nom": "Diaby Losseni", "photo": "bureau/secretaire_adjointe.jpeg"},
+        {"role": "Trésorière Principale", "nom": "Diabate Mata Fatim", "photo": "bureau/tresoriere_principale.jpeg"},
+        {"role": "Trésorière Adjointe", "nom": "Ndri Ayella", "photo": "bureau/tresoriere_adjointe.jpeg"},
     ]
 
     return render_template(
