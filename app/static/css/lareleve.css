@@ -392,7 +392,11 @@ input, textarea { font-family: inherit; }
 .nav-mobile {
   position: fixed;
   top: var(--nav-h); left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,0.98);
+  /* Fond opaque : sur certains navigateurs mobiles, backdrop-filter ne se
+     compose pas correctement et laisse transparaître le contenu de la page
+     à travers un fond rgba() translucide — d'où le blanc plein ici, le
+     flou n'étant plus qu'un embellissement optionnel. */
+  background: #ffffff;
   backdrop-filter: blur(20px);
   padding: 2rem;
   transform: translateX(100%);
