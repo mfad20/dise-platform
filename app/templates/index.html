@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% from "partials/hero_carousel.html" import carousel %}
+{% from "partials/icons.html" import icon %}
+{% block title %}DISE — Plateforme officielle de la Division des Ingénieurs Statisticiens Économistes{% endblock %}
+
+{% block content %}
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+  {{ carousel('heroCarousel') }}
+  <div class="container hero-container">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Plateforme officielle · DISE · ENSEA Abidjan
+    </div>
+
+    <h1 class="hero-title">
+      <span class="hero-title-line hero-la">DISE</span>
+      <span class="hero-title-line hero-releve">Notre Réseau</span>
+    </h1>
+
+    <p class="hero-slogan">Rayonner, rassembler, valoriser</p>
+
+    <p class="hero-sub">
+      Un espace unique pour retrouver le réseau des <strong>Ingénieurs Statisticiens Économistes</strong>,
+      suivre la vie de la division, accéder aux publications et soutenir nos activités en toute transparence.
+    </p>
+
+    <div class="hero-actions">
+      <a href="{{ url_for('main.la_dise') }}" class="btn-primary btn-hero">
+        Découvrir la DISE
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="{{ url_for('annuaire.liste') }}" class="btn-ghost btn-hero">Explorer l'annuaire</a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-num" data-count="{{ kpis.nb_alumni }}">0</span>
+        <span class="hero-meta-label">Alumni</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num" data-count="{{ kpis.nb_promotions }}">0</span>
+        <span class="hero-meta-label">Promotions</span>
+      </div>
+      <div class="hero-meta-divider"></div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num" data-count="{{ kpis.nb_pays }}">0</span>
+        <span class="hero-meta-label">Pays représentés</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Découvrir</span>
+      <div class="scroll-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPTEUR DE VISITEURS ═══ -->
+<div class="visitor-counter-bar">
+  <div class="container flex-between" style="flex-wrap:wrap; gap:.5rem;">
+    <span class="text-muted" style="font-size:.8rem;">Merci de faire vivre le réseau DISE.</span>
+    <span class="visitor-counter-chip">
+      {{ icon('eye', width=15, height=15) }}
+      <span data-count="{{ nb_visiteurs }}">0</span> visite(s) sur la plateforme
+    </span>
+  </div>
+</div>
+
+<!-- ═══ PRÉSENTATION + MOT DU PRÉSIDENT ═══ -->
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start;">
+    <div data-aos="fade-right">
+      <span class="eyebrow">Présentation</span>
+      <h2 class="mt-0">La DISE, une communauté qui rayonne</h2>
+      <p>La Division des Ingénieurs Statisticiens Économistes de l'ENSEA Abidjan rassemble étudiants et anciens autour d'un même réseau : administrations publiques, institutions internationales, entreprises privées et monde académique.</p>
+      <p>Cette plateforme centralise l'annuaire des alumni, la vie de la division, les publications et les actions solidaires de la communauté.</p>
+      <a href="{{ url_for('main.la_dise') }}" class="btn btn-outline btn-sm mt-1">En savoir plus sur la DISE</a>
+    </div>
+
+    {% if president %}
+    <div data-aos="fade-left">
+      <span class="eyebrow">Mot du Président</span>
+      <div class="card">
+        <div class="flex gap-2" style="align-items:center;margin-bottom:1rem;">
+          <div class="avatar avatar-lg">
+            {% if president.photo_url and 'default.svg' not in president.photo_url %}
+            <img src="{{ url_for('static', filename='img/' ~ president.photo_url) }}" alt="{{ president.nom_complet }}">
+            {% else %}
+            {{ president.prenoms[0] }}{{ president.nom[0] }}
+            {% endif %}
+          </div>
+          <div>
+            <strong>{{ president.nom_complet }}</strong>
+            <div class="text-muted" style="font-size:.82rem;">{{ president.fonction_bureau }}</div>
+          </div>
+        </div>
+        <p class="vgc-quote">{{ president.bio or "Le mot du Président sera bientôt disponible." }}</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══ CHIFFRES CLÉS ═══ -->
+<section class="section-chiffres" id="chiffres">
+  <div class="chiffres-bg"></div>
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-eyebrow">En chiffres</span>
+      <h2 class="section-title">La DISE en <span class="gold">quelques données</span></h2>
+    </div>
+    <div class="chiffres-grid">
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="chiffre-icon">{{ icon('users') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_alumni }}" data-suffix="+">0</div>
+        <div class="chiffre-label">Alumni</div>
+      </div>
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="50">
+        <div class="chiffre-icon">{{ icon('graduation-cap') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_etudiants }}">0</div>
+        <div class="chiffre-label">Étudiants actuels</div>
+      </div>
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="chiffre-icon">{{ icon('layers') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_promotions }}">0</div>
+        <div class="chiffre-label">Promotions</div>
+      </div>
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="150">
+        <div class="chiffre-icon">{{ icon('globe-2') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_pays }}">0</div>
+        <div class="chiffre-label">Pays représentés</div>
+      </div>
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="chiffre-icon">{{ icon('briefcase') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_entreprises }}">0</div>
+        <div class="chiffre-label">Entreprises</div>
+      </div>
+      <div class="chiffre-card" data-aos="fade-up" data-aos-delay="250">
+        <div class="chiffre-icon">{{ icon('book-open') }}</div>
+        <div class="chiffre-num" data-count="{{ kpis.nb_publications }}">0</div>
+        <div class="chiffre-label">Publications</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ACTUALITÉS ═══ -->
+<section class="section">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:2rem;" data-aos="fade-up">
+      <div>
+        <span class="eyebrow">Vie de la DISE</span>
+        <h2 class="mt-0">Dernières actualités</h2>
+      </div>
+      <a href="{{ url_for('main.actualites') }}" class="btn btn-outline btn-sm">Toutes les actualités</a>
+    </div>
+    <div class="grid grid-3">
+      {% for a in actus %}
+      <a href="{{ url_for('main.actualite_detail', actu_id=a.id) }}" class="card" style="text-decoration:none;" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+        <span class="badge badge-info">{{ a.categorie }}</span>
+        <h3 class="mt-2">{{ a.titre }}</h3>
+        <p class="text-muted" style="font-size:.88rem;">{{ a.chapo }}</p>
+        <span class="text-muted" style="font-size:.78rem;">{{ a.date_publication | date_fr }}</span>
+      </a>
+      {% else %}
+      <p class="text-muted">Aucune actualité publiée pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ÉVÉNEMENTS ═══ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:2rem;" data-aos="fade-up">
+      <div>
+        <span class="eyebrow">Agenda</span>
+        <h2 class="mt-0">Événements à venir</h2>
+      </div>
+      <a href="{{ url_for('main.evenements') }}" class="btn btn-outline btn-sm">Voir le calendrier</a>
+    </div>
+    <div class="grid grid-3">
+      {% for e in evenements %}
+      <a href="{{ url_for('main.evenement_detail', evt_id=e.id) }}" class="card media-card" style="text-decoration:none;" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+        {% if e.affiche_url %}<div class="media-thumb"><img src="{{ url_for('static', filename='img/' ~ e.affiche_url) }}" alt="{{ e.titre }}"></div>{% endif %}
+        <span class="badge badge-gold">{{ e.categorie }}</span>
+        <h3 class="mt-2">{{ e.titre }}</h3>
+        <p class="text-muted" style="font-size:.85rem;">{{ e.date_debut | date_fr('%d %B %Y à %Hh%M') }} · {{ e.lieu }}</p>
+      </a>
+      {% else %}
+      <p class="text-muted">Aucun événement programmé pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PUBLICATIONS + PORTRAIT ═══ -->
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start;">
+    <div data-aos="fade-right">
+      <span class="eyebrow">Publications</span>
+      <h2 class="mt-0">Parutions récentes</h2>
+      <div class="grid" style="gap:1rem;">
+        {% for p in publications %}
+        <div class="card flex gap-2" style="align-items:center;">
+          {% if p.couverture_url %}
+          <div class="avatar" style="border-radius:8px;"><img src="{{ url_for('static', filename='img/' ~ p.couverture_url) }}" alt="{{ p.titre }}"></div>
+          {% else %}
+          <div class="avatar" style="border-radius:8px;">{{ (p.type_publication or '?')[:2] }}</div>
+          {% endif %}
+          <div>
+            <strong>{{ p.titre }}</strong>
+            <div class="text-muted" style="font-size:.8rem;">{{ p.type_publication }} · {{ p.annee }}</div>
+          </div>
+        </div>
+        {% else %}
+        <p class="text-muted">Aucune publication disponible.</p>
+        {% endfor %}
+      </div>
+      <a href="{{ url_for('main.publications') }}" class="btn btn-outline btn-sm mt-2">Voir la bibliothèque</a>
+    </div>
+
+    <div data-aos="fade-left">
+      <span class="eyebrow">Portrait</span>
+      <h2 class="mt-0">Alumni à l'honneur</h2>
+      {% if portrait %}
+      <div class="card flex gap-2" style="align-items:center;">
+        <div class="avatar avatar-lg">{{ portrait.prenoms[0] }}{{ portrait.nom[0] }}</div>
+        <div>
+          <strong>{{ portrait.nom_complet }}</strong>
+          <div class="text-muted" style="font-size:.85rem;">{{ portrait.fonction_actuelle }} — {{ portrait.entreprise }}</div>
+          <div class="text-muted" style="font-size:.8rem;">Promotion {{ portrait.promotion }} · {{ portrait.pays_residence }}</div>
+          <a href="{{ url_for('annuaire.fiche', user_id=portrait.id) }}" class="btn btn-outline btn-sm mt-2">Voir le profil</a>
+        </div>
+      </div>
+      {% else %}
+      <p class="text-muted">Portrait à venir.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if temoignages %}
+<!-- ═══ TÉMOIGNAGES ═══ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-eyebrow">Ils témoignent</span>
+      <h2 class="section-title">La parole aux <span class="gold">anciens</span></h2>
+    </div>
+    <div class="grid grid-3">
+      {% for t in temoignages %}
+      <div class="card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+        <p class="vgc-quote">{{ t.bio }}</p>
+        <div class="vgc-author">
+          <div class="vgc-avatar">{{ t.prenoms[0] }}{{ t.nom[0] }}</div>
+          <div>
+            <strong>{{ t.nom_complet }}</strong>
+            <div class="text-muted" style="font-size:.78rem;">Promotion {{ t.promotion or '—' }} · {{ t.fonction_actuelle or '' }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ VIDÉO DE PRÉSENTATION ═══ -->
+<section class="section">
+  <div class="container" data-aos="zoom-in">
+    <div class="section-header" style="margin-bottom:1.5rem;">
+      <span class="section-eyebrow">Découvrir en vidéo</span>
+      <h2 class="section-title">Vidéo de <span class="electric">présentation</span></h2>
+    </div>
+    {% if video_presentation_url %}
+    <div class="video-embed-wrap">
+      {% if video_est_externe %}
+      <iframe src="{{ video_presentation_url }}" title="Vidéo de présentation de la DISE" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      {% else %}
+      <video controls preload="metadata">
+        <source src="{{ url_for('static', filename=video_presentation_url) }}" type="video/mp4">
+      </video>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="video-embed-wrap video-embed-placeholder">
+      {{ icon('play-circle', width=48, height=48) }}
+      <p>Vidéo de présentation à venir.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══ CTA FINANCES ═══ -->
+<section class="section-cta-final">
+  <div class="cta-aurora-1"></div>
+  <div class="cta-aurora-2"></div>
+  <div class="container cta-final-inner" data-aos="zoom-in">
+    <span class="eyebrow">Finances</span>
+    <h2 class="cta-final-title">Soutenez la DISE, en toute <span class="gold">transparence</span></h2>
+    <p class="cta-final-sub">Cotisations, dons et campagnes de financement sont déclarés en ligne puis validés manuellement par le Trésorier après réception des fonds via Wave, Orange Money, MTN ou Moov Money.</p>
+    <div class="cta-final-actions">
+      <a href="{{ url_for('finances.index') }}" class="btn-primary btn-large">Découvrir le module Finances</a>
+    </div>
+    <div class="cta-ensea-logos">
+      <div class="cta-logo-badges">
+        <span class="badge-logo">ENSEA</span>
+        <span class="badge-logo">DISE · ABIDJAN</span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

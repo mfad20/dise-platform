@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Transparence financière — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_tresorerie.jpg", "Trésorerie", "Le pôle Trésorerie de la DISE"),
+  ("bureau/tresoriere_principale.jpeg", "Gouvernance", "Le Bureau DISE 2025-2026"),
+  ("brand/equipe_complet.jpg", "Confiance", "La communauté DISE au complet"),
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+] %}
+{{ page_header_carousel(eyebrow="Confiance de la communauté", title="Transparence financière", slides=slides) }}
+
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start;">
+    <div class="card">
+      <span class="eyebrow">Recettes globales validées</span>
+      <p class="stat-number" style="font-size:1.8rem;">{{ kpis.montant_collecte | fcfa }}</p>
+      <p class="text-muted" style="font-size:.85rem;">{{ kpis.nb_projets_finances }} projet(s)/campagne(s) soutenu(s)</p>
+      <a href="#" class="btn btn-outline btn-sm mt-1">Télécharger le rapport financier annuel (PDF)</a>
+    </div>
+
+    <div class="card">
+      <span class="eyebrow">Répartition des dépenses</span>
+      {% for label, pct in depenses %}
+      <div class="mt-1">
+        <div class="flex-between" style="font-size:.85rem;"><span>{{ label }}</span><span class="stat-number">{{ pct }} %</span></div>
+        <div class="progress"><div class="progress-bar" style="width:{{ pct }}%;"></div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

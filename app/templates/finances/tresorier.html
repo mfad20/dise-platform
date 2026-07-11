@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord Trésorier — DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Accès restreint au Bureau</span>
+    <h1>Tableau de bord du Trésorier</h1>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4">
+      <div class="card"><span class="eyebrow">Total collecté</span><p class="stat-number" style="font-size:1.4rem;">{{ kpis.montant_collecte | fcfa }}</p></div>
+      <div class="card"><span class="eyebrow">À vérifier</span><p class="stat-number" style="font-size:1.4rem;">{{ en_attente | length }}</p></div>
+      <div class="card"><span class="eyebrow">Cotisants</span><p class="stat-number" style="font-size:1.4rem;">{{ kpis.nb_cotisants }}</p></div>
+      <div class="card"><span class="eyebrow">Donateurs</span><p class="stat-number" style="font-size:1.4rem;">{{ kpis.nb_donateurs }}</p></div>
+    </div>
+
+    <div class="grid grid-2 mt-3" style="align-items:start;">
+      <div class="card">
+        <span class="eyebrow">Répartition par moyen de paiement</span>
+        {% for moyen, montant in repartition_moyen.items() %}
+        <div class="flex-between" style="font-size:.85rem;padding:.3rem 0;border-bottom:1px solid var(--glass-border);">
+          <span>{{ moyen }}</span><span class="stat-number">{{ montant | fcfa }}</span>
+        </div>
+        {% else %}<p class="text-muted">Aucune donnée validée.</p>{% endfor %}
+      </div>
+      <div class="card">
+        <span class="eyebrow">Répartition par type de contribution</span>
+        {% for type_c, montant in repartition_type.items() %}
+        <div class="flex-between" style="font-size:.85rem;padding:.3rem 0;border-bottom:1px solid var(--glass-border);">
+          <span>{{ type_c.replace('_',' ') }}</span><span class="stat-number">{{ montant | fcfa }}</span>
+        </div>
+        {% else %}<p class="text-muted">Aucune donnée validée.</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2>Déclarations à traiter</h2>
+    {% if en_attente %}
+    <table class="card">
+      <thead><tr><th>Déclarant</th><th>Type</th><th>Montant</th><th>Moyen</th><th>Date</th><th>Référence</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for c in en_attente %}
+      <tr>
+        <td>{{ c.prenoms_declarant }} {{ c.nom_declarant }}{% if c.promotion %} ({{ c.promotion }}){% endif %}</td>
+        <td>{{ c.type_contribution.replace('_',' ') }}</td>
+        <td>{{ c.montant | fcfa }}</td>
+        <td>{{ c.moyen_paiement }}</td>
+        <td>{{ c.date_paiement.strftime('%d/%m/%Y') }}</td>
+        <td>{{ c.reference_transaction or '—' }}</td>
+        <td class="flex gap-1">
+          <form method="post" action="{{ url_for('finances.valider_contribution', contrib_id=c.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-primary">Valider</button>
+          </form>
+          <form method="post" action="{{ url_for('finances.refuser_contribution', contrib_id=c.id) }}" data-confirm="Confirmez-vous le refus de cette déclaration ?">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-danger">Refuser</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>Aucune déclaration en attente de traitement.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2>Dernières validations</h2>
+    <table class="card">
+      <thead><tr><th>Déclarant</th><th>Montant</th><th>Moyen</th><th>Date de validation</th></tr></thead>
+      <tbody>
+      {% for c in validees %}
+      <tr>
+        <td>{{ c.prenoms_declarant }} {{ c.nom_declarant }}</td>
+        <td>{{ c.montant | fcfa }}</td>
+        <td>{{ c.moyen_paiement }}</td>
+        <td>{{ c.date_validation.strftime('%d/%m/%Y %Hh%M') if c.date_validation else '—' }}</td>
+      </tr>
+      {% else %}<tr><td colspan="4" class="text-muted">Aucune validation récente.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

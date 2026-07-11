@@ -1,0 +1,13 @@
+{% from "partials/hero_carousel.html" import carousel %}
+
+{% macro page_header_carousel(eyebrow, title, subtitle=None, slides=none) %}
+<div class="page-header page-header-carousel-wrap">
+  {{ carousel('pageHeaderCarousel', slides=slides) }}
+  <div class="container">
+    <span class="eyebrow">{{ eyebrow }}</span>
+    <h1>{{ title }}</h1>
+    {% if subtitle %}<p class="text-muted">{{ subtitle }}</p>{% endif %}
+    {% if caller is defined %}{{ caller() }}{% endif %}
+  </div>
+</div>
+{% endmacro %}

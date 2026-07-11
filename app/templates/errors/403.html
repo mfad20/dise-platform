@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Accès refusé — DISE{% endblock %}
+{% block content %}
+<section class="section text-center">
+  <div class="container">
+    <span class="eyebrow">Erreur 403</span>
+    <h1>Accès réservé</h1>
+    <p class="text-muted">Cette page est réservée à un rôle spécifique (Bureau ou Administrateur).</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Retour à l'accueil</a>
+  </div>
+</section>
+{% endblock %}

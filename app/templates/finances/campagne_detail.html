@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ campagne.titre }} — DISE{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:700px;">
+    <span class="badge {{ 'badge-success' if campagne.active else 'badge-info' }}">{{ 'Active' if campagne.active else 'Clôturée' }}</span>
+    <h1 class="mt-2">{{ campagne.titre }}</h1>
+    <p>{{ campagne.description }}</p>
+
+    <div class="card">
+      <p class="stat-number" style="font-size:1.6rem;">{{ campagne.montant_collecte | fcfa }} <span class="text-muted" style="font-size:1rem;font-family:var(--font-body);">sur {{ campagne.objectif | fcfa }}</span></p>
+      <div class="progress"><div class="progress-bar" style="width:{{ campagne.taux }}%;"></div></div>
+      <p class="text-muted mt-1" style="font-size:.85rem;">{{ campagne.taux }} % de l'objectif · {{ campagne.nb_donateurs }} donateur(s)</p>
+      <a href="{{ url_for('finances.declarer') }}" class="btn btn-gold btn-block mt-2">Faire un don pour cette campagne</a>
+    </div>
+    <a href="{{ url_for('finances.campagnes') }}" class="btn btn-outline btn-sm mt-2">← Toutes les campagnes</a>
+  </div>
+</section>
+{% endblock %}

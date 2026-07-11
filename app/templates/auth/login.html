@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Connexion — DISE{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:420px;">
+    <div class="card">
+      <h1 class="text-center">Se connecter</h1>
+      <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="identifiant">E-mail ou téléphone</label>
+        <input type="text" id="identifiant" name="identifiant" required>
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required>
+        <div class="flex-between mt-0" style="margin-bottom:1rem;">
+          <span class="checkbox-row"><input type="checkbox" id="remember" name="remember"><label for="remember" style="margin:0;">Se souvenir de moi</label></span>
+          <a href="{{ url_for('auth.forgot_password') }}" style="font-size:.85rem;">Mot de passe oublié ?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+      </form>
+      <a href="{{ url_for('auth.login_google') }}" class="btn btn-outline btn-block mt-1">Continuer avec Google</a>
+      <p class="text-center mt-2" style="font-size:.88rem;">Pas encore de compte ? <a href="{{ url_for('auth.register') }}">S'enregistrer</a></p>
+    </div>
+
+    <div class="card mt-2" style="background:rgba(15,23,42,0.04);">
+      <span class="eyebrow">Comptes de démonstration</span>
+      <p style="font-size:.82rem;margin-bottom:.3rem;">Étudiant : <code>etudiant@dise.ci</code> / <code>Etudiant2026!</code></p>
+      <p style="font-size:.82rem;margin-bottom:.3rem;">Alumni : <code>alumni@dise.ci</code> / <code>Alumni2026!</code></p>
+      <p style="font-size:.82rem;margin-bottom:.3rem;">Trésorier (Bureau) : <code>tresorier@dise.ci</code> / <code>Bureau2026!</code></p>
+      <p style="font-size:.82rem;margin-bottom:0;">Administrateur : <code>admin@dise.ci</code> / <code>Admin2026!</code></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Galerie — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("activites_passees/DISE_AKWABA.jpeg", "Souvenir", "Grande Rentrée des ISE — Akwaba"),
+  ("activites_passees/ISEchampionShip2025_image_famille.jpeg", "Compétition", "ISE Championship 2025"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Promotion", "La Grande Rentrée des ISE — Akwaba"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Conférence", "Rendez-vous des Experts — ENSEA"),
+] %}
+{{ page_header_carousel(eyebrow="Souvenirs", title="Galerie", subtitle="Photos et affiches des événements de la DISE.", slides=slides) }}
+<section class="section">
+  <div class="container grid grid-3">
+    {% for e in evenements %}
+    <a href="{{ url_for('main.evenement_detail', evt_id=e.id) }}" class="card card-flush media-card" style="text-decoration:none;" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+      <div class="media-thumb" style="margin:0;height:190px;border-radius:0;">
+        <img src="{{ url_for('static', filename='img/' ~ e.affiche_url) }}" alt="{{ e.titre }}">
+      </div>
+      <div style="padding:1rem;">
+        <strong>{{ e.titre }}</strong>
+        <div class="text-muted" style="font-size:.8rem;">{{ e.date_debut | date_fr }}</div>
+      </div>
+    </a>
+    {% else %}
+    <p class="text-muted">Aucun album disponible pour le moment.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">Autres souvenirs</span>
+    <h2 class="mt-0">Albums de la communauté</h2>
+    <div class="grid grid-4">
+      {% for album in albums_supplementaires %}
+      <div class="card card-flush media-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+        <div class="media-thumb" style="margin:0;height:150px;border-radius:0;">
+          <img src="{{ url_for('static', filename='img/' ~ album.photo) }}" alt="{{ album.titre }}">
+        </div>
+        <div style="padding:.85rem;">
+          <strong style="font-size:.88rem;">{{ album.titre }}</strong>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

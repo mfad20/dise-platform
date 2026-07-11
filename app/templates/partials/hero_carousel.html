@@ -1,0 +1,35 @@
+{% macro carousel(id, slides=none, show_captions=false) %}
+{% set slides = slides or [
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+  ("ensea/diplomation.jpg", "Cérémonie", "Remise des diplômes de la promotion ISE"),
+  ("ensea/grande_rentree.jpg", "Grande Rentrée", "La Grande Rentrée des ISE — Akwaba"),
+  ("ensea/photo_remerciement.jpg", "Communauté", "La communauté DISE réunie"),
+] %}
+<div class="hero-carousel" id="{{ id }}" data-autoplay="5500" role="region" aria-roledescription="carrousel" aria-label="Photos de l'ENSEA">
+  <div class="hero-carousel-track">
+    {% for img, eyebrow, titre in slides %}
+    <div class="hero-carousel-slide{% if loop.first %} active{% endif %}" style="background-image:url('{{ url_for('static', filename='img/' ~ img) }}')" role="group" aria-roledescription="slide" aria-label="{{ loop.index }} sur {{ slides|length }}">
+      {% if show_captions %}
+      <div class="hero-carousel-caption">
+        <span class="hcc-eyebrow">{{ eyebrow }}</span>
+        <span class="hcc-title">{{ titre }}</span>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" class="hero-carousel-arrow prev" aria-label="Photo précédente">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button type="button" class="hero-carousel-arrow next" aria-label="Photo suivante">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+
+  <div class="hero-carousel-dots" role="tablist" aria-label="Sélection de la photo">
+    {% for _ in slides %}
+    <button type="button" class="hero-carousel-dot{% if loop.first %} active{% endif %}" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-label="Photo {{ loop.index }}"></button>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}

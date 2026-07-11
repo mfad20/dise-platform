@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}DISE — Plateforme officielle{% endblock %}</title>
+<meta name="description" content="{% block meta_desc %}Plateforme numérique officielle de la DISE (Division des Ingénieurs Statisticiens Économistes) — ENSEA Abidjan.{% endblock %}">
+
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon-32.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-180.png') }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+<!-- Design system DISE (dérivé du site La Relève — sans particules/Three.js) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lareleve.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/photos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<noscript><style>#loader { display: none !important; }</style></noscript>
+
+<!-- Loader cinématique léger (logo DISE, sans particules) -->
+<div id="loader" aria-hidden="true">
+  <div class="loader-bg"></div>
+  <div class="loader-content">
+    <div class="loader-logo">
+      <img src="{{ url_for('static', filename='img/brand/logo.png') }}" alt="DISE" style="width:90px;height:90px;object-fit:contain;border-radius:12px;">
+    </div>
+    <div class="loader-title">
+      <span class="loader-la">DISE</span>
+      <span class="loader-releve" style="font-size:clamp(1.4rem,4vw,2.2rem);">ENSEA · Abidjan</span>
+    </div>
+    <div class="loader-slogan">Rayonner, rassembler, valoriser</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+    <div class="loader-percent">0%</div>
+  </div>
+</div>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="navbar" class="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="nav-container">
+    <a href="{{ url_for('main.index') }}" class="nav-logo" aria-label="DISE — Accueil">
+      <div class="nav-logo-icon">
+        <img src="{{ url_for('static', filename='img/brand/logo.png') }}" alt="DISE" class="nav-logo-img">
+      </div>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">DISE</span>
+        <span class="nav-logo-sub">ENSEA · Abidjan</span>
+      </div>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint=='main.index' %}active{% endif %}">Accueil</a></li>
+
+      <li class="nav-item-dropdown">
+        <button type="button" class="nav-link nav-dropdown-toggle {% if request.endpoint=='main.la_dise' %}active{% endif %}" aria-expanded="false">
+          La DISE
+          <svg class="nav-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <ul class="nav-dropdown-menu" role="list">
+          <li><a href="{{ url_for('main.la_dise') }}#mission">Présentation</a></li>
+          <li><a href="{{ url_for('main.la_dise') }}#historique">Historique</a></li>
+          <li><a href="{{ url_for('main.la_dise') }}#bureau">Le Bureau</a></li>
+          <li><a href="{{ url_for('main.la_dise') }}#poles">Nos pôles</a></li>
+          <li><a href="{{ url_for('main.la_dise') }}#hall-of-fame">Hall of Fame</a></li>
+        </ul>
+      </li>
+
+      <li><a href="{{ url_for('annuaire.liste') }}" class="nav-link {% if request.endpoint and request.endpoint.startswith('annuaire.') %}active{% endif %}">Annuaire</a></li>
+      <li><a href="{{ url_for('main.actualites') }}" class="nav-link {% if request.endpoint in ['main.actualites','main.actualite_detail'] %}active{% endif %}">Actualités</a></li>
+      <li><a href="{{ url_for('main.evenements') }}" class="nav-link {% if request.endpoint in ['main.evenements','main.evenement_detail'] %}active{% endif %}">Évènements</a></li>
+
+      <li class="nav-item-dropdown">
+        <button type="button" class="nav-link nav-dropdown-toggle {% if request.endpoint in ['main.communaute','main.opportunites','main.publications','main.galerie','main.archives'] %}active{% endif %}" aria-expanded="false">
+          La communauté
+          <svg class="nav-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <ul class="nav-dropdown-menu" role="list">
+          <li><a href="{{ url_for('main.communaute') }}">Mentorat &amp; clubs</a></li>
+          <li><a href="{{ url_for('main.opportunites') }}">Opportunités</a></li>
+          <li><a href="{{ url_for('main.publications') }}">Publications</a></li>
+          <li><a href="{{ url_for('main.galerie') }}">Galerie</a></li>
+          <li><a href="{{ url_for('main.archives') }}">Archives</a></li>
+        </ul>
+      </li>
+
+      <li><a href="{{ url_for('main.contact') }}" class="nav-link {% if request.endpoint=='main.contact' %}active{% endif %}">Contacts</a></li>
+
+      {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.endpoint=='main.dashboard' %}active{% endif %}">Mon espace</a></li>
+      {% if current_user.role == 'admin' %}
+      <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link {% if request.endpoint and request.endpoint.startswith('admin.') %}active{% endif %}">Admin</a></li>
+      {% endif %}
+      <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Déconnexion</a></li>
+      {% else %}
+      <li><a href="{{ url_for('auth.login') }}" class="nav-link {% if request.endpoint=='auth.login' %}active{% endif %}">Se connecter</a></li>
+      <li><a href="{{ url_for('auth.register') }}" class="nav-link {% if request.endpoint=='auth.register' %}active{% endif %}">S'inscrire</a></li>
+      {% endif %}
+    </ul>
+
+    <a href="{{ url_for('finances.index') }}" class="nav-cta">Je cotise</a>
+
+    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false" aria-controls="navMobile">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-mobile" id="navMobile" role="dialog" aria-modal="true" aria-label="Menu mobile">
+    <ul role="list">
+      <li><a href="{{ url_for('main.index') }}" class="nav-link">Accueil</a></li>
+
+      <li class="nav-mobile-group-label">La DISE</li>
+      <li><a href="{{ url_for('main.la_dise') }}#mission" class="nav-link nav-sublink">Présentation</a></li>
+      <li><a href="{{ url_for('main.la_dise') }}#historique" class="nav-link nav-sublink">Historique</a></li>
+      <li><a href="{{ url_for('main.la_dise') }}#bureau" class="nav-link nav-sublink">Le Bureau</a></li>
+      <li><a href="{{ url_for('main.la_dise') }}#poles" class="nav-link nav-sublink">Nos pôles</a></li>
+      <li><a href="{{ url_for('main.la_dise') }}#hall-of-fame" class="nav-link nav-sublink">Hall of Fame</a></li>
+
+      <li><a href="{{ url_for('annuaire.liste') }}" class="nav-link">Annuaire</a></li>
+      <li><a href="{{ url_for('main.actualites') }}" class="nav-link">Actualités</a></li>
+      <li><a href="{{ url_for('main.evenements') }}" class="nav-link">Évènements</a></li>
+
+      <li class="nav-mobile-group-label">La communauté</li>
+      <li><a href="{{ url_for('main.communaute') }}" class="nav-link nav-sublink">Mentorat &amp; clubs</a></li>
+      <li><a href="{{ url_for('main.opportunites') }}" class="nav-link nav-sublink">Opportunités</a></li>
+      <li><a href="{{ url_for('main.publications') }}" class="nav-link nav-sublink">Publications</a></li>
+      <li><a href="{{ url_for('main.galerie') }}" class="nav-link nav-sublink">Galerie</a></li>
+      <li><a href="{{ url_for('main.archives') }}" class="nav-link nav-sublink">Archives</a></li>
+
+      <li><a href="{{ url_for('main.contact') }}" class="nav-link">Contacts</a></li>
+      {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('main.dashboard') }}" class="nav-link">Mon espace</a></li>
+      {% if current_user.role == 'admin' %}<li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">Admin</a></li>{% endif %}
+      <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Déconnexion</a></li>
+      {% else %}
+      <li><a href="{{ url_for('auth.login') }}" class="nav-link">Se connecter</a></li>
+      <li><a href="{{ url_for('auth.register') }}" class="nav-link">S'inscrire</a></li>
+      {% endif %}
+      <li><a href="{{ url_for('finances.index') }}" class="btn-primary" style="display:block;text-align:center;margin-top:1rem;">Je cotise</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="flash-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<main id="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-aurora"></div>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="{{ url_for('static', filename='img/brand/logo.png') }}" alt="DISE" style="height:42px;width:42px;object-fit:contain;border-radius:8px;">
+          <span>DISE</span>
+        </div>
+        <p class="footer-slogan">Rayonner, rassembler,<br>valoriser notre communauté</p>
+        <p class="footer-desc">Division des Ingénieurs Statisticiens Économistes<br>ENSEA · Abidjan, Côte d'Ivoire</p>
+        <div style="display:flex;gap:0.75rem;margin-top:1.25rem;align-items:center;">
+          <img src="{{ url_for('static', filename='img/brand/logo_ensea.png') }}" alt="ENSEA" class="partner-logo">
+          <img src="{{ url_for('static', filename='img/brand/logo_aes.jpg') }}" alt="AES" class="partner-logo">
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h4>Explorer</h4>
+        <ul>
+          <li><a href="{{ url_for('main.la_dise') }}">La DISE</a></li>
+          <li><a href="{{ url_for('annuaire.liste') }}">Annuaire des alumni</a></li>
+          <li><a href="{{ url_for('main.evenements') }}">Événements</a></li>
+          <li><a href="{{ url_for('main.publications') }}">Publications</a></li>
+          <li><a href="{{ url_for('main.opportunites') }}">Opportunités</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-programme">
+        <h4>Communauté</h4>
+        <ul>
+          <li><a href="{{ url_for('main.communaute') }}">Mentorat</a></li>
+          <li><a href="{{ url_for('finances.index') }}">Cotiser / Faire un don</a></li>
+          <li><a href="{{ url_for('finances.transparence') }}">Transparence financière</a></li>
+          <li><a href="{{ url_for('main.galerie') }}">Galerie</a></li>
+          <li><a href="{{ url_for('main.archives') }}">Archives</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p>ENSEA · Abidjan, Côte d'Ivoire</p>
+        <p>contact@dise-ensea.ci</p>
+        <a href="{{ url_for('main.contact') }}" class="btn-primary footer-btn">Nous contacter</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ now.year }} DISE — ENSEA Abidjan. Tous droits réservés.</p>
+      <p class="footer-credit">Plateforme numérique officielle · <span class="gold">Rayonner, rassembler, valoriser</span></p>
+    </div>
+  </div>
+</footer>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+<script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

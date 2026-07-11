@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Communauté et Mentorat — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_complet.jpg", "Communauté", "La communauté DISE au complet"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Parrainage", "La Grande Rentrée des ISE — Akwaba"),
+  ("activites_passees/ISEchampionShip2025_image_famille.jpeg", "Cohésion", "ISE Championship 2025"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Réseau", "Étudiants et alumni réunis à l'ENSEA"),
+] %}
+{{ page_header_carousel(eyebrow="Réseautage", title="Communauté & Mentorat", slides=slides) }}
+
+<section class="section">
+  <div class="container">
+    <h2>Mentors disponibles</h2>
+    <div class="grid grid-3">
+      {% for m in mentors %}
+      <div class="card">
+        <div class="flex gap-2" style="align-items:center;">
+          <div class="avatar">{{ m.prenoms[0] }}{{ m.nom[0] }}</div>
+          <div>
+            <strong>{{ m.nom_complet }}</strong>
+            <div class="meta text-muted">{{ m.fonction_actuelle }}</div>
+          </div>
+        </div>
+        <p class="text-muted mt-1" style="font-size:.85rem;">Domaines : {{ m.domaines_mentorat }}</p>
+
+        {% if current_user.is_authenticated and current_user.role == 'etudiant' %}
+        <form method="post" action="{{ url_for('main.demande_mentorat', mentor_id=m.id) }}" class="mt-1">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <select name="sujet">
+            <option value="coaching">Coaching / accompagnement</option>
+            <option value="cv">Correction de CV</option>
+            <option value="entretien">Simulation d'entretien</option>
+            <option value="orientation">Orientation professionnelle</option>
+          </select>
+          <textarea name="message" rows="2" placeholder="Un mot sur votre demande…"></textarea>
+          <button type="submit" class="btn btn-gold btn-sm btn-block">Demander un mentorat</button>
+        </form>
+        {% endif %}
+      </div>
+      {% else %}
+      <p class="text-muted">Aucun mentor n'est encore inscrit.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2>Clubs &amp; Commissions</h2>
+    <div class="grid grid-3">
+      {% for c in clubs %}
+      <div class="card">
+        <h3 class="mt-0">{{ c.nom }}</h3>
+        <p style="font-size:.88rem;">{{ c.description }}</p>
+        <p class="text-muted" style="font-size:.8rem;">Responsable : {{ c.responsable }} · {{ c.membres_count }} membres</p>
+      </div>
+      {% else %}
+      <p class="text-muted">Aucun club renseigné.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

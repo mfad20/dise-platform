@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ evt.titre }} — DISE{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container grid responsive-2col" style="grid-template-columns: 2fr 1fr; align-items:start;">
+    <div>
+      <span class="badge badge-gold">{{ evt.categorie }}</span>
+      <h1 class="mt-2">{{ evt.titre }}</h1>
+      <p class="text-muted">{{ evt.date_debut | date_fr('%d %B %Y à %Hh%M') }} · {{ evt.lieu }}</p>
+      {% if evt.affiche_url %}
+      <div class="team-photo-wrap mt-2 mb-2">
+        <img src="{{ url_for('static', filename='img/' ~ evt.affiche_url) }}" alt="{{ evt.titre }}">
+      </div>
+      {% endif %}
+      <p>{{ evt.description }}</p>
+
+      {% if evt.intervenants %}
+      <div class="card mt-2">
+        <span class="eyebrow">Intervenants</span>
+        <p class="mb-0">{{ evt.intervenants }}</p>
+      </div>
+      {% endif %}
+
+      {% if evt.programme %}
+      <div class="card mt-2">
+        <span class="eyebrow">Programme</span>
+        {% for ligne in evt.programme.split('\n') %}
+          {% if ligne.strip() %}<p>{{ ligne }}</p>{% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if evt.est_passe %}
+      <div class="card mt-2">
+        <span class="eyebrow">Après l'événement</span>
+        <p>Retrouvez les photos dans la <a href="{{ url_for('main.galerie') }}">Galerie</a> et les <a href="{{ url_for('main.archives') }}">Archives</a>.</p>
+        {% if evt.replay_url %}<a href="{{ evt.replay_url }}" class="btn btn-outline btn-sm" target="_blank">Voir le replay</a>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <span class="eyebrow">Inscription</span>
+      <p class="stat-number" style="font-size:1.4rem;">{{ nb_inscrits }} inscrit(s)</p>
+      {% if evt.est_passe %}
+        <p class="text-muted">Cet événement est terminé.</p>
+      {% elif deja_inscrit %}
+        <p class="badge badge-success">Vous êtes inscrit</p>
+      {% elif current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('main.evenement_inscription', evt_id=evt.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-primary btn-block">S'inscrire à l'événement</button>
+        </form>
+      {% else %}
+        <p class="text-muted" style="font-size:.85rem;">Connectez-vous pour vous inscrire.</p>
+        <a href="{{ url_for('auth.login', next=request.path) }}" class="btn btn-primary btn-block">Se connecter</a>
+      {% endif %}
+      <div class="mt-2" style="text-align:center;">
+        <div class="qr-placeholder" style="margin:0 auto;">QR Code<br>d'accès à l'événement</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

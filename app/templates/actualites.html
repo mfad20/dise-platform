@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Actualités — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Conférence", "Rendez-vous des Experts — Amphithéâtre ENSEA"),
+  ("activites_passees/ISEchampionShip2025_image_famille.jpeg", "Compétition", "ISE Championship 2025"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Vie de la division", "Grande Rentrée des ISE — Akwaba"),
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+] %}
+{{ page_header_carousel(eyebrow="Vie de la DISE", title="Actualités", slides=slides) }}
+<section class="section">
+  <div class="container">
+    <form method="get" class="flex gap-1" style="margin-bottom:1.5rem;flex-wrap:wrap;">
+      <input type="text" name="q" placeholder="Rechercher une actualité…" value="{{ q }}" style="max-width:280px;margin:0;">
+      <button class="btn btn-outline btn-sm" type="submit">Rechercher</button>
+      <a href="{{ url_for('main.actualites') }}" class="chip {% if not categorie %}active{% endif %}">Toutes</a>
+      {% for c in categories %}
+      <a href="{{ url_for('main.actualites', categorie=c) }}" class="chip {% if categorie==c %}active{% endif %}">{{ c }}</a>
+      {% endfor %}
+    </form>
+
+    <div class="grid grid-3">
+      {% for a in actus %}
+      <a href="{{ url_for('main.actualite_detail', actu_id=a.id) }}" class="card" style="text-decoration:none;">
+        <span class="badge badge-info">{{ a.categorie }}</span>
+        <h3 class="mt-2">{{ a.titre }}</h3>
+        <p class="text-muted" style="font-size:.88rem;">{{ a.chapo }}</p>
+        <span class="text-muted" style="font-size:.78rem;">{{ a.date_publication | date_fr }} · {{ a.auteur }}</span>
+      </a>
+      {% else %}
+      <div class="empty-state"><p>Aucune actualité ne correspond à votre recherche.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

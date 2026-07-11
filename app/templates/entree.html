@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+{% block title %}Bienvenue — DISE{% endblock %}
+
+{% block content %}
+<section class="entree-hero">
+  <div class="container entree-container">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Plateforme officielle · DISE · ENSEA Abidjan
+    </div>
+
+    <h1 class="entree-title">Bienvenue sur l'espace <span class="gold">DISE</span></h1>
+    <p class="entree-sub">
+      Connectez-vous pour accéder à l'annuaire complet, au mentorat et à votre
+      espace personnel — ou explorez librement le site en tant que visiteur.
+    </p>
+
+    <div class="entree-choix">
+      <a href="{{ url_for('auth.login') }}" class="entree-card entree-card--primary">
+        <div class="entree-card-icon">{{ icon('log-in') }}</div>
+        <h2>Se connecter</h2>
+        <p>Étudiant, alumni ou membre du Bureau : accédez à toutes les fonctionnalités réservées à la communauté.</p>
+        <span class="entree-card-cta">Se connecter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+
+      <a href="{{ url_for('main.continuer_sans_compte') }}" class="entree-card">
+        <div class="entree-card-icon">{{ icon('compass') }}</div>
+        <h2>Continuer sans compte</h2>
+        <p>Découvrez la DISE, l'actualité, les événements et un aperçu de l'annuaire — sans créer de compte.</p>
+        <span class="entree-card-cta">Explorer le site <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+    </div>
+
+    <p class="entree-footer-link">Pas encore de compte ? <a href="{{ url_for('auth.register') }}">Rejoindre la communauté</a></p>
+  </div>
+</section>
+{% endblock %}

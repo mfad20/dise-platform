@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Mon tableau de bord — DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container flex-between">
+    <div>
+      <span class="eyebrow">Espace personnel</span>
+      <h1>Bonjour, {{ current_user.prenoms }}</h1>
+    </div>
+    <span class="badge badge-blue">{{ current_user.role | capitalize }}</span>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container grid responsive-2col" style="grid-template-columns: 1fr 1.4fr; align-items:start;">
+
+    <!-- Profil -->
+    <div class="card">
+      <span class="eyebrow">Mon profil</span>
+      <form method="post" action="{{ url_for('main.update_profil') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label for="fonction_actuelle">Fonction actuelle</label>
+        <input type="text" name="fonction_actuelle" value="{{ current_user.fonction_actuelle or '' }}">
+        <label for="entreprise">Entreprise / organisation</label>
+        <input type="text" name="entreprise" value="{{ current_user.entreprise or '' }}">
+        <label for="secteur_activite">Secteur d'activité</label>
+        <input type="text" name="secteur_activite" value="{{ current_user.secteur_activite or '' }}">
+        <div class="form-row">
+          <div><label for="pays_residence">Pays de résidence</label><input type="text" name="pays_residence" value="{{ current_user.pays_residence or '' }}"></div>
+          <div><label for="ville_residence">Ville</label><input type="text" name="ville_residence" value="{{ current_user.ville_residence or '' }}"></div>
+        </div>
+        <label for="domaine_expertise">Domaines d'expertise (séparés par virgules)</label>
+        <input type="text" name="domaine_expertise" value="{{ current_user.domaine_expertise or '' }}">
+        <label for="linkedin">Lien LinkedIn</label>
+        <input type="url" name="linkedin" value="{{ current_user.linkedin or '' }}">
+        <label for="autres_liens">Autres liens (GitHub, Scholar…)</label>
+        <input type="url" name="autres_liens" value="{{ current_user.autres_liens or '' }}">
+        <label for="bio">Biographie courte</label>
+        <textarea name="bio" rows="3">{{ current_user.bio or '' }}</textarea>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="visible_email" name="visible_email" {% if current_user.visible_email %}checked{% endif %}>
+          <label for="visible_email" style="margin:0;">Rendre mon e-mail visible dans l'annuaire</label>
+        </div>
+        <div class="checkbox-row mt-1">
+          <input type="checkbox" id="visible_telephone" name="visible_telephone" {% if current_user.visible_telephone %}checked{% endif %}>
+          <label for="visible_telephone" style="margin:0;">Rendre mon téléphone visible dans l'annuaire</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-2">Enregistrer les modifications</button>
+      </form>
+    </div>
+
+    <!-- Widgets -->
+    <div>
+      <div class="grid grid-2">
+        <div class="card">
+          <span class="eyebrow">Cotisations &amp; dons</span>
+          <p class="stat-number" style="font-size:1.6rem;">{{ contributions | length }}</p>
+          <p class="text-muted" style="font-size:.82rem;">déclaration(s) enregistrée(s)</p>
+          <a href="{{ url_for('finances.declarer') }}" class="btn btn-outline btn-sm">Déclarer un paiement</a>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Événements</span>
+          <p class="stat-number" style="font-size:1.6rem;">{{ evenements | length }}</p>
+          <p class="text-muted" style="font-size:.82rem;">inscription(s)</p>
+          <a href="{{ url_for('main.evenements') }}" class="btn btn-outline btn-sm">Voir l'agenda</a>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <span class="eyebrow">Historique de cotisations et dons</span>
+        {% if contributions %}
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Montant</th><th>Moyen</th><th>Statut</th></tr></thead>
+          <tbody>
+          {% for c in contributions %}
+          <tr>
+            <td>{{ c.date_paiement.strftime('%d/%m/%Y') }}</td>
+            <td>{{ c.type_contribution.replace('_',' ') }}</td>
+            <td>{{ c.montant | fcfa }}</td>
+            <td>{{ c.moyen_paiement }}</td>
+            <td>
+              {% if c.statut == 'valide' %}<span class="badge badge-success">Validé</span>
+              {% elif c.statut == 'refuse' %}<span class="badge badge-danger">Refusé</span>
+              {% else %}<span class="badge badge-warning">En attente</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">Aucune contribution déclarée pour le moment.</p>
+        {% endif %}
+      </div>
+
+      {% if demandes %}
+      <div class="card mt-2">
+        <span class="eyebrow">Mes demandes de mentorat</span>
+        {% for d in demandes %}
+        <div class="flex-between" style="padding:.4rem 0;border-bottom:1px solid var(--glass-border);">
+          <span>{{ d.sujet }} — {{ d.mentor.nom_complet }}</span>
+          <span class="badge badge-info">{{ d.statut }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if current_user.est_mentor and demandes_recues %}
+      <div class="card mt-2">
+        <span class="eyebrow">Demandes de mentorat reçues</span>
+        {% for d in demandes_recues %}
+        <div class="flex-between" style="padding:.4rem 0;border-bottom:1px solid var(--glass-border);">
+          <span>{{ d.sujet }} — {{ d.etudiant.nom_complet }}</span>
+          <span class="badge badge-info">{{ d.statut }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if current_user.peut_valider_paiements %}
+      <div class="card mt-2" style="border-left:4px solid var(--gold);">
+        <span class="eyebrow">Accès Bureau</span>
+        <p>Vous avez accès au tableau de bord du Trésorier.</p>
+        <a href="{{ url_for('finances.tresorier') }}" class="btn btn-gold btn-sm">Ouvrir l'espace Trésorier</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

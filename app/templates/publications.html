@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Publications — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+  ("ensea/diplomation.jpg", "Savoir", "Remise des diplômes de la promotion ISE"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Expertise", "Rendez-vous des Experts — ENSEA"),
+  ("brand/equipe_complet.jpg", "Rédaction", "La communauté DISE au complet"),
+] %}
+{{ page_header_carousel(eyebrow="Bibliothèque", title="Publications", slides=slides) }}
+<section class="section">
+  <div class="container">
+    <div class="tag-list" style="margin-bottom:1.5rem;">
+      <a href="{{ url_for('main.publications') }}" class="chip {% if not type_filtre %}active{% endif %}">Toutes</a>
+      <a href="{{ url_for('main.publications', type='ISE Mag') }}" class="chip {% if type_filtre=='ISE Mag' %}active{% endif %}">ISE Mag</a>
+      <a href="{{ url_for('main.publications', type='Journal de la Quinzaine') }}" class="chip {% if type_filtre=='Journal de la Quinzaine' %}active{% endif %}">Journal de la Quinzaine</a>
+      <a href="{{ url_for('main.publications', type='Bibliothèque') }}" class="chip {% if type_filtre=='Bibliothèque' %}active{% endif %}">Bibliothèque / Mémoires</a>
+    </div>
+
+    <div class="grid grid-3">
+      {% for p in publications %}
+      <div class="card media-card">
+        {% if p.couverture_url %}<div class="media-thumb"><img src="{{ url_for('static', filename='img/' ~ p.couverture_url) }}" alt="{{ p.titre }}"></div>{% endif %}
+        <span class="badge badge-info">{{ p.type_publication }}</span>
+        <h3 class="mt-2">{{ p.titre }}</h3>
+        <p class="text-muted" style="font-size:.85rem;">{{ p.auteur }} · {{ p.annee }}{% if p.numero %} · N° {{ p.numero }}{% endif %}</p>
+        <p style="font-size:.88rem;">{{ p.resume }}</p>
+        <a href="#" class="btn btn-outline btn-sm">Lire / Télécharger le PDF</a>
+      </div>
+      {% else %}
+      <div class="empty-state"><p>Aucune publication dans cette catégorie.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Administration — DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Back-office</span>
+    <h1>Administration</h1>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4">
+      <div class="card"><span class="eyebrow">Utilisateurs</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.nb_users }}</p></div>
+      <div class="card"><span class="eyebrow">Étudiants</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.nb_etudiants }}</p></div>
+      <div class="card"><span class="eyebrow">Alumni</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.nb_alumni }}</p></div>
+      <div class="card"><span class="eyebrow">Bureau</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.nb_bureau }}</p></div>
+    </div>
+    <div class="grid grid-4 mt-2">
+      <div class="card"><span class="eyebrow">Comptes à valider</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.comptes_a_valider }}</p></div>
+      <div class="card"><span class="eyebrow">Paiements à traiter</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.contributions_a_traiter }}</p></div>
+      <div class="card"><span class="eyebrow">Actualités publiées</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.nb_actualites }}</p></div>
+      <div class="card"><span class="eyebrow">Messages non traités</span><p class="stat-number" style="font-size:1.5rem;">{{ stats.messages_non_traites }}</p></div>
+    </div>
+
+    <div class="flex gap-2 mt-3" style="flex-wrap:wrap;">
+      <a href="{{ url_for('admin.utilisateurs') }}" class="btn btn-primary">Gérer les utilisateurs et rôles</a>
+      <a href="{{ url_for('finances.tresorier') }}" class="btn btn-outline">Valider les paiements</a>
+      <a href="{{ url_for('admin.messages') }}" class="btn btn-outline">Messages de contact</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Finances — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_tresorerie.jpg", "Trésorerie", "Le pôle Trésorerie de la DISE"),
+  ("bureau/tresoriere_principale.jpeg", "Gouvernance", "Le Bureau DISE 2025-2026"),
+  ("bureau/tresoriere_adjointe.jpeg", "Gouvernance", "Le Bureau DISE 2025-2026"),
+  ("brand/equipe_complet.jpg", "Communauté", "La communauté DISE au complet"),
+] %}
+{{ page_header_carousel(
+  eyebrow="Module stratégique et sensible", title="Finances & Cotisations",
+  subtitle="La plateforme n'effectue aucune transaction bancaire : elle enregistre des déclarations de paiement, validées manuellement par le Trésorier après réception effective des fonds sur Wave, Orange Money, MTN ou Moov Money.",
+  slides=slides
+) }}
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4">
+      <div class="card">
+        <span class="eyebrow">Objectif annuel</span>
+        <p class="stat-number" style="font-size:1.5rem;">{{ kpis.objectif_annuel | fcfa }}</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Montant collecté</span>
+        <p class="stat-number" style="font-size:1.5rem;">{{ kpis.montant_collecte | fcfa }}</p>
+        <div class="progress"><div class="progress-bar" style="width:{{ kpis.taux_realisation }}%;"></div></div>
+        <span class="text-muted" style="font-size:.78rem;">{{ kpis.taux_realisation }} % de l'objectif</span>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Cotisants</span>
+        <p class="stat-number" style="font-size:1.5rem;">{{ kpis.nb_cotisants }}</p>
+        <div class="sparkline"></div>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Donateurs</span>
+        <p class="stat-number" style="font-size:1.5rem;">{{ kpis.nb_donateurs }}</p>
+        <div class="sparkline"></div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-3" style="flex-wrap:wrap;">
+      <a href="{{ url_for('finances.declarer') }}" class="btn btn-primary">Cotiser / Déclarer un paiement</a>
+      <a href="{{ url_for('finances.don') }}" class="btn btn-gold">Faire un don</a>
+      <a href="{{ url_for('finances.campagnes') }}" class="btn btn-outline">Campagnes de financement</a>
+      <a href="{{ url_for('finances.transparence') }}" class="btn btn-outline">Transparence financière</a>
+      {% if current_user.is_authenticated %}<a href="{{ url_for('finances.historique') }}" class="btn btn-outline">Mon historique</a>{% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">Moyens de paiement</span>
+    <h2 class="mt-0">Comment cotiser ou faire un don</h2>
+    <p class="text-muted">Chaque moyen de paiement affiche le nom et la fonction de la personne habilitée à recevoir les fonds, pour une transparence totale.</p>
+    <div class="grid grid-4">
+      {% for m in moyens_paiement %}
+      <div class="card payment-card">
+        <span class="badge badge-blue">{{ m.nom }}</span>
+        <div class="qr-placeholder mt-1">QR Code {{ m.nom }}</div>
+        <div class="payment-number">{{ m.numero }}</div>
+        <p style="font-size:.85rem;margin-bottom:.2rem;"><strong>{{ m.beneficiaire_nom }}</strong></p>
+        <p class="text-muted" style="font-size:.78rem;">{{ m.beneficiaire_fonction }}</p>
+        <button class="btn btn-outline btn-sm copy-btn" data-copy="{{ m.numero }}">Copier le numéro</button>
+      </div>
+      {% else %}
+      <p class="text-muted">Les moyens de paiement seront communiqués prochainement.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if campagnes %}
+<section class="section">
+  <div class="container">
+    <span class="eyebrow">En cours</span>
+    <h2 class="mt-0">Campagnes de financement actives</h2>
+    <div class="grid grid-3">
+      {% for c in campagnes %}
+      <a href="{{ url_for('finances.campagne_detail', campagne_id=c.id) }}" class="card" style="text-decoration:none;">
+        <h3 class="mt-0">{{ c.titre }}</h3>
+        <p class="text-muted" style="font-size:.85rem;">{{ c.montant_collecte | fcfa }} sur {{ c.objectif | fcfa }}</p>
+        <div class="progress"><div class="progress-bar" style="width:{{ c.taux }}%;"></div></div>
+        <span class="text-muted" style="font-size:.78rem;">{{ c.taux }} % · {{ c.nb_donateurs }} donateur(s)</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

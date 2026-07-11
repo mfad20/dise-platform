@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Opportunités — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_presidence.jpg", "Excellence", "Le pôle Présidence de la DISE"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Expertise", "Rendez-vous des Experts — ENSEA"),
+  ("brand/equipe_tresorerie.jpg", "Professionnalisme", "Le pôle Trésorerie de la DISE"),
+  ("ensea/diplomation.jpg", "Réussite", "Remise des diplômes de la promotion ISE"),
+] %}
+{{ page_header_carousel(
+  eyebrow="Réseau professionnel", title="Opportunités",
+  subtitle="Stages, emplois, consultances, bourses et concours partagés par le réseau DISE.",
+  slides=slides
+) }}
+<section class="section">
+  <div class="container">
+    <form method="get" class="flex gap-1" style="margin-bottom:1.5rem;flex-wrap:wrap;">
+      <select name="type" onchange="this.form.submit()" style="max-width:220px;margin:0;">
+        <option value="">Tous les types</option>
+        <option value="Stage" {% if type_filtre=='Stage' %}selected{% endif %}>Stage</option>
+        <option value="Emploi" {% if type_filtre=='Emploi' %}selected{% endif %}>Emploi</option>
+        <option value="Bourse" {% if type_filtre=='Bourse' %}selected{% endif %}>Bourse</option>
+        <option value="Concours" {% if type_filtre=='Concours' %}selected{% endif %}>Concours</option>
+      </select>
+      <select name="pays" onchange="this.form.submit()" style="max-width:220px;margin:0;">
+        <option value="">Tous les pays</option>
+        {% for p in pays_list %}
+        <option value="{{ p }}" {% if pays_filtre==p %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <div class="grid grid-2">
+      {% for o in offres %}
+      <div class="card">
+        <div class="flex-between">
+          <span class="badge badge-info">{{ o.type_offre }}</span>
+          {% if o.date_limite and o.date_limite >= today %}
+          <span class="text-muted" style="font-size:.78rem;">Date limite : {{ o.date_limite.strftime('%d/%m/%Y') }}</span>
+          {% endif %}
+        </div>
+        <h3 class="mt-2">{{ o.titre }}</h3>
+        <p class="text-muted" style="font-size:.85rem;">{{ o.entreprise }} · {{ o.pays }}</p>
+        <p style="font-size:.88rem;">{{ o.description }}</p>
+        <div class="tag-list">
+          <span class="chip">{{ o.domaine }}</span>
+          {% if o.experience_requise %}<span class="chip">{{ o.experience_requise }}</span>{% endif %}
+        </div>
+        <a href="{{ o.lien or '#' }}" class="btn btn-outline btn-sm mt-2">Postuler / En savoir plus</a>
+      </div>
+      {% else %}
+      <div class="empty-state"><p>Aucune opportunité ne correspond à vos filtres.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

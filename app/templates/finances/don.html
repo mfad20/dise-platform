@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Faire un don — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_complet.jpg", "Solidarité", "La communauté DISE au complet"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Ensemble", "La Grande Rentrée des ISE — Akwaba"),
+  ("brand/equipe_tresorerie.jpg", "Trésorerie", "Le pôle Trésorerie de la DISE"),
+  ("ensea/photo_remerciement.jpg", "Gratitude", "Remerciements de la promotion"),
+] %}
+{{ page_header_carousel(eyebrow="Solidarité", title="Faire un don", subtitle="Votre don peut soutenir une cause précise de la DISE.", slides=slides) }}
+<section class="section">
+  <div class="container grid grid-3">
+    {% for code, label in causes %}
+    <div class="card">
+      <h3 class="mt-0">{{ label }}</h3>
+      <a href="{{ url_for('finances.declarer') }}" class="btn btn-gold btn-sm mt-1">Faire un don pour cette cause</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+<section class="section section-alt">
+  <div class="container">
+    <span class="eyebrow">Moyens de paiement</span>
+    <div class="grid grid-4">
+      {% for m in moyens_paiement %}
+      <div class="card payment-card">
+        <span class="badge badge-blue">{{ m.nom }}</span>
+        <div class="qr-placeholder mt-1">QR Code {{ m.nom }}</div>
+        <div class="payment-number">{{ m.numero }}</div>
+        <p style="font-size:.82rem;">{{ m.beneficiaire_nom }} — {{ m.beneficiaire_fonction }}</p>
+        <button class="btn btn-outline btn-sm copy-btn" data-copy="{{ m.numero }}">Copier le numéro</button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Contact — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+  ("brand/equipe_secretaire.jpg", "Secrétariat", "Le pôle Secrétariat de la DISE"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "À votre écoute", "La communauté DISE réunie"),
+  ("ensea/photo_remerciement.jpg", "Communauté", "La communauté DISE réunie"),
+] %}
+{{ page_header_carousel(eyebrow="Nous écrire", title="Contact", slides=slides) }}
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start;">
+    <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row">
+        <div><label for="nom">Nom complet</label><input type="text" id="nom" name="nom" required></div>
+        <div><label for="email">E-mail</label><input type="email" id="email" name="email" required></div>
+      </div>
+      <label for="sujet">Sujet</label>
+      <input type="text" id="sujet" name="sujet">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+      <button type="submit" class="btn btn-primary">Envoyer le message</button>
+    </form>
+
+    <div>
+      <div class="card">
+        <span class="eyebrow">Coordonnées</span>
+        <p>ENSEA Abidjan — Cocody, Côte d'Ivoire</p>
+        <p>Division des Ingénieurs Statisticiens Économistes</p>
+        <div class="tag-list mt-1">
+          <a href="#" class="chip">LinkedIn</a>
+          <a href="#" class="chip">Facebook</a>
+          <a href="#" class="chip">Instagram</a>
+        </div>
+      </div>
+      <div class="card mt-2">
+        <span class="eyebrow">FAQ</span>
+        <p><strong>Comment devenir mentor ?</strong><br>Rendez-vous sur votre tableau de bord personnel, section « Mentorat », après connexion en tant qu'alumni.</p>
+        <p><strong>Comment déclarer une cotisation ?</strong><br>Depuis la page <a href="{{ url_for('finances.index') }}">Finances</a>, choisissez un moyen de paiement puis déclarez votre transaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

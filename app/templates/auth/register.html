@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Inscription — DISE{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:520px;">
+    <div class="card">
+      <h1 class="text-center">Rejoindre la communauté</h1>
+      <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-row">
+          <div><label for="prenoms">Prénoms</label><input type="text" id="prenoms" name="prenoms" required></div>
+          <div><label for="nom">Nom</label><input type="text" id="nom" name="nom" required></div>
+        </div>
+        <div class="form-row">
+          <div><label for="email">E-mail</label><input type="email" id="email" name="email" required></div>
+          <div><label for="telephone">Téléphone</label><input type="tel" id="telephone" name="telephone"></div>
+        </div>
+
+        <label for="profil">Vous êtes</label>
+        <select id="profil" name="profil" required onchange="document.getElementById('promo-field').style.display = this.value !== 'autre' ? 'block' : 'none';">
+          <option value="etudiant">Étudiant ISE actuel</option>
+          <option value="alumni">Alumni (ancien diplômé)</option>
+          <option value="autre">Membre du Bureau / administration ENSEA</option>
+        </select>
+
+        <div id="promo-field">
+          <label for="promotion">Promotion (année)</label>
+          <input type="number" id="promotion" name="promotion" min="1990" max="2030" placeholder="ex. 2022">
+        </div>
+
+        <div class="form-row">
+          <div><label for="password">Mot de passe</label><input type="password" id="password" name="password" required minlength="8"></div>
+          <div><label for="password_confirm">Confirmer le mot de passe</label><input type="password" id="password_confirm" name="password_confirm" required minlength="8"></div>
+        </div>
+        <p class="help-text">8 caractères minimum.</p>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="cgu" name="cgu" required>
+          <label for="cgu" style="margin:0;font-weight:400;">J'accepte les conditions d'utilisation et la politique de confidentialité.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-2">Créer mon compte</button>
+      </form>
+      <p class="text-center mt-2" style="font-size:.88rem;">Déjà inscrit ? <a href="{{ url_for('auth.login') }}">Se connecter</a></p>
+      <p class="help-text text-center">Les comptes « Membre du Bureau / administration » sont validés manuellement par un Administrateur avant activation complète des droits.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

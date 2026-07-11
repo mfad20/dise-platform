@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Archives — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("ensea/diplomation.jpg", "Cérémonie", "Remise des diplômes de la promotion ISE"),
+  ("activites_passees/grande_rentree.jpg", "Vie de la division", "Grande Rentrée des ISE"),
+  ("activites_passees/ise_championship.jpg", "Compétition", "ISE Championship"),
+  ("ensea/photo_remerciement.jpg", "Souvenir", "Remerciements de la promotion"),
+] %}
+{{ page_header_carousel(
+  eyebrow="Mémoire de la division", title="Archives",
+  subtitle="Photos, vidéos, affiches et comptes rendus des événements passés — classés par année, événement ou promotion.",
+  slides=slides
+) }}
+
+<section class="section">
+  <div class="container grid grid-2" style="align-items:start;">
+    <div>
+      <h2>Par événement</h2>
+      <div class="grid" style="gap:1rem;">
+        {% for e in evenements %}
+        <a href="{{ url_for('main.evenement_detail', evt_id=e.id) }}" class="card flex gap-2" style="align-items:center;text-decoration:none;">
+          {% if e.affiche_url %}
+          <div class="avatar" style="border-radius:8px;"><img src="{{ url_for('static', filename='img/' ~ e.affiche_url) }}" alt="{{ e.titre }}"></div>
+          {% else %}
+          <div class="avatar" style="border-radius:8px;">{{ e.titre[0] }}</div>
+          {% endif %}
+          <div>
+            <strong>{{ e.titre }}</strong>
+            <div class="meta text-muted">{{ e.date_debut | date_fr }}</div>
+          </div>
+        </a>
+        {% else %}
+        <p class="text-muted">Aucune archive disponible pour le moment.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <div>
+      <h2>Par promotion</h2>
+      <div class="tag-list">
+        {% for p in promotions %}
+        <a href="{{ url_for('annuaire.liste', promotion=p) }}" class="chip">Promotion {{ p }}</a>
+        {% else %}
+        <p class="text-muted">Aucune promotion renseignée.</p>
+        {% endfor %}
+      </div>
+      <p class="text-muted mt-2" style="font-size:.85rem;">Chaque promotion dispose de sa propre archive : photo officielle, liste des étudiants et souvenirs.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

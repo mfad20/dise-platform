@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Campagnes de financement — DISE{% endblock %}
+{% block content %}
+{% set slides = [
+  ("brand/equipe_tresorerie.jpg", "Trésorerie", "Le pôle Trésorerie de la DISE"),
+  ("brand/equipe_complet.jpg", "Solidarité", "La communauté DISE au complet"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Ensemble", "La Grande Rentrée des ISE — Akwaba"),
+  ("ensea/diplomation.jpg", "Avenir", "Remise des diplômes de la promotion ISE"),
+] %}
+{{ page_header_carousel(eyebrow="Centre de soutien à la DISE", title="Campagnes de financement", slides=slides) }}
+<section class="section">
+  <div class="container grid grid-3">
+    {% for c in campagnes %}
+    <a href="{{ url_for('finances.campagne_detail', campagne_id=c.id) }}" class="card" style="text-decoration:none;">
+      {% if not c.active %}<span class="badge badge-info">Clôturée</span>{% else %}<span class="badge badge-success">Active</span>{% endif %}
+      <h3 class="mt-2">{{ c.titre }}</h3>
+      <p class="text-muted" style="font-size:.85rem;">{{ c.montant_collecte | fcfa }} sur {{ c.objectif | fcfa }}</p>
+      <div class="progress"><div class="progress-bar" style="width:{{ c.taux }}%;"></div></div>
+      <span class="text-muted" style="font-size:.78rem;">{{ c.taux }} % · {{ c.nb_donateurs }} donateur(s)</span>
+    </a>
+    {% else %}
+    <div class="empty-state"><p>Aucune campagne en cours.</p></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

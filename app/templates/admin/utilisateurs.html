@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Utilisateurs — Administration DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Back-office</span>
+    <h1>Utilisateurs et rôles</h1>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="tag-list" style="margin-bottom:1.2rem;">
+      <a href="{{ url_for('admin.utilisateurs') }}" class="chip {% if not role_filtre %}active{% endif %}">Tous</a>
+      <a href="{{ url_for('admin.utilisateurs', role='etudiant') }}" class="chip {% if role_filtre=='etudiant' %}active{% endif %}">Étudiants</a>
+      <a href="{{ url_for('admin.utilisateurs', role='alumni') }}" class="chip {% if role_filtre=='alumni' %}active{% endif %}">Alumni</a>
+      <a href="{{ url_for('admin.utilisateurs', role='bureau') }}" class="chip {% if role_filtre=='bureau' %}active{% endif %}">Bureau</a>
+      <a href="{{ url_for('admin.utilisateurs', role='admin') }}" class="chip {% if role_filtre=='admin' %}active{% endif %}">Administrateurs</a>
+    </div>
+
+    <table class="card">
+      <thead><tr><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Promotion</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.nom_complet }}</td>
+        <td>{{ u.email }}</td>
+        <td><span class="badge badge-blue">{{ u.role }}</span></td>
+        <td>{{ u.promotion or '—' }}</td>
+        <td>
+          {% if not u.is_validated %}<span class="badge badge-warning">À valider</span>
+          {% else %}<span class="badge badge-success">Actif</span>{% endif %}
+        </td>
+        <td class="flex gap-1">
+          {% if not u.is_validated %}
+          <form method="post" action="{{ url_for('admin.valider_utilisateur', user_id=u.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-primary">Valider</button>
+          </form>
+          {% endif %}
+          <form method="post" action="{{ url_for('admin.changer_role', user_id=u.id) }}" class="flex gap-1">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="role" style="margin:0;width:auto;">
+              {% for r in ['etudiant','alumni','bureau','admin'] %}
+              <option value="{{ r }}" {% if u.role==r %}selected{% endif %}>{{ r }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-sm btn-outline">Changer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

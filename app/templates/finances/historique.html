@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Mon historique financier — DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Espace personnel</span>
+    <h1>Mon historique de cotisations et dons</h1>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    {% if contributions %}
+    <table class="card">
+      <thead><tr><th>Date</th><th>Type</th><th>Montant</th><th>Moyen</th><th>Statut</th><th>Reçu</th></tr></thead>
+      <tbody>
+      {% for c in contributions %}
+      <tr>
+        <td>{{ c.date_paiement.strftime('%d/%m/%Y') }}</td>
+        <td>{{ c.type_contribution.replace('_',' ') }}</td>
+        <td>{{ c.montant | fcfa }}</td>
+        <td>{{ c.moyen_paiement }}</td>
+        <td>
+          {% if c.statut == 'valide' %}<span class="badge badge-success">Validé</span>
+          {% elif c.statut == 'refuse' %}<span class="badge badge-danger">Refusé</span>
+          {% else %}<span class="badge badge-warning">En attente</span>{% endif %}
+        </td>
+        <td>{% if c.statut == 'valide' %}<a href="#">Télécharger</a>{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>Aucune contribution déclarée pour le moment.</p></div>
+    {% endif %}
+    <a href="{{ url_for('finances.declarer') }}" class="btn btn-primary mt-2">Déclarer un nouveau paiement</a>
+  </div>
+</section>
+{% endblock %}

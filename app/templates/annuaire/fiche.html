@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ alumnus.nom_complet }} — Annuaire DISE{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container grid responsive-2col" style="grid-template-columns: 300px 1fr; align-items:start;">
+    <div class="card text-center">
+      <div class="avatar avatar-lg" style="margin:0 auto 1rem;">{{ alumnus.prenoms[0] }}{{ alumnus.nom[0] }}</div>
+      <h2 class="mt-0">{{ alumnus.nom_complet }}</h2>
+      <span class="badge badge-blue">Promotion {{ alumnus.promotion or '—' }}</span>
+      {% if alumnus.role == 'bureau' %}<span class="badge badge-gold">{{ alumnus.fonction_bureau }}</span>{% endif %}
+      {% if alumnus.doctorant %}<span class="badge badge-gold">Doctorant</span>{% endif %}
+
+      <div class="mt-3" style="text-align:left;">
+        {% if alumnus.linkedin %}<p><a href="{{ alumnus.linkedin }}" target="_blank" rel="noopener">Profil LinkedIn</a></p>{% endif %}
+        {% if alumnus.autres_liens %}<p><a href="{{ alumnus.autres_liens }}" target="_blank" rel="noopener">Autres liens</a></p>{% endif %}
+        {% if peut_voir_contact and alumnus.email %}<p>{{ alumnus.email }}</p>{% endif %}
+        {% if peut_voir_contact and alumnus.visible_telephone and alumnus.telephone %}<p>{{ alumnus.telephone }}</p>{% endif %}
+        {% if not peut_voir_contact %}
+          <p class="text-muted" style="font-size:.8rem;">Les coordonnées complètes sont visibles selon le consentement de l'alumni et votre rôle sur la plateforme.</p>
+        {% endif %}
+      </div>
+
+      <a href="{{ url_for('annuaire.export_fiche', user_id=alumnus.id) }}" class="btn btn-outline btn-sm btn-block mt-2">Exporter la fiche</a>
+    </div>
+
+    <div>
+      {% if alumnus.bio %}
+      <div class="card mt-0">
+        <span class="eyebrow">Biographie</span>
+        <p class="mb-0">{{ alumnus.bio }}</p>
+      </div>
+      {% endif %}
+
+      <div class="grid grid-2 mt-2">
+        <div class="card">
+          <span class="eyebrow">Parcours académique</span>
+          <table>
+            <tr><th>Filière</th><td>{{ alumnus.filiere or '—' }}</td></tr>
+            <tr><th>Années</th><td>{{ alumnus.annee_entree or '—' }} – {{ alumnus.annee_sortie or '—' }}</td></tr>
+            {% if alumnus.etablissement_actuel %}<tr><th>Établissement actuel</th><td>{{ alumnus.etablissement_actuel }}</td></tr>{% endif %}
+            {% if alumnus.doctorant and alumnus.sujet_these %}<tr><th>Sujet de thèse</th><td>{{ alumnus.sujet_these }}</td></tr>{% endif %}
+            <tr><th>Nationalité</th><td>{{ alumnus.nationalite or '—' }}</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Parcours professionnel</span>
+          <table>
+            <tr><th>Fonction</th><td>{{ alumnus.fonction_actuelle or '—' }}</td></tr>
+            <tr><th>Entreprise</th><td>{{ alumnus.entreprise or '—' }}</td></tr>
+            <tr><th>Secteur</th><td>{{ alumnus.secteur_activite or '—' }}</td></tr>
+            {% if alumnus.visible_localisation %}
+            <tr><th>Localisation</th><td>{{ alumnus.ville_residence }}, {{ alumnus.pays_residence }}</td></tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
+
+      {% if alumnus.domaine_expertise %}
+      <div class="card mt-2">
+        <span class="eyebrow">Domaines d'expertise</span>
+        <div class="tag-list">
+          {% for mot in alumnus.domaine_expertise.split(',') %}
+          <span class="chip">{{ mot.strip() }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if alumnus.est_mentor %}
+      <div class="card mt-2" style="border-left:4px solid var(--gold);">
+        <span class="eyebrow">Mentorat</span>
+        <p class="mb-1">Cet alumni est disponible comme <strong>mentor</strong> — domaines : {{ alumnus.domaines_mentorat }}.</p>
+        <a href="{{ url_for('main.communaute') }}" class="btn btn-outline-gold btn-sm">Demander un mentorat</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

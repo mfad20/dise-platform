@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Annuaire des Alumni — DISE{% endblock %}
+
+{% block content %}
+{% set slides = [
+  ("brand/equipe_complet.jpg", "Communauté", "La communauté DISE au complet"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Réseau", "Étudiants et alumni réunis à l'ENSEA"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Promotions", "La Grande Rentrée des ISE — Akwaba"),
+  ("activites_passees/ISEchampionShip2025_image_famille.jpeg", "Cohésion", "ISE Championship 2025"),
+] %}
+{% call page_header_carousel(
+  eyebrow="Module central", title="Annuaire des Alumni",
+  subtitle="Retrouvez et valorisez chaque ancien de la DISE — " ~ nb_resultats ~ " profil(s) correspondant(s).",
+  slides=slides
+) %}
+<a href="{{ url_for('annuaire.carte') }}" class="btn btn-outline btn-sm mt-1">Voir la carte des anciens</a>
+{% endcall %}
+
+<section class="section">
+  <div class="container">
+
+    <!-- Panneau de filtres -->
+    <form class="filters-panel mb-3" method="get">
+      {% if args.get('tri') %}<input type="hidden" name="tri" value="{{ args.get('tri') }}">{% endif %}
+      <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+        <div>
+          <label for="q">Recherche</label>
+          <input type="text" id="q" name="q" placeholder="Nom, fonction, entreprise…" value="{{ args.get('q','') }}">
+        </div>
+        <div>
+          <label for="promotion">Promotion</label>
+          <select id="promotion" name="promotion">
+            <option value="">Toutes</option>
+            {% for p in promotions %}
+            <option value="{{ p }}" {% if args.get('promotion')|string == p|string %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="pays">Pays de résidence</label>
+          <select id="pays" name="pays">
+            <option value="">Tous</option>
+            {% for p in pays %}
+            <option value="{{ p }}" {% if args.get('pays') == p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="secteur">Secteur d'activité</label>
+          <select id="secteur" name="secteur">
+            <option value="">Tous</option>
+            {% for s in secteurs %}
+            <option value="{{ s }}" {% if args.get('secteur') == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="fonction">Fonction</label>
+          <select id="fonction" name="fonction">
+            <option value="">Toutes</option>
+            {% for f in fonctions %}
+            <option value="{{ f }}" {% if args.get('fonction') == f %}selected{% endif %}>{{ f }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-between" style="flex-wrap:wrap;gap:1rem;">
+        <div class="checkbox-row" style="margin:0;">
+          <input type="checkbox" id="doctorant" name="doctorant" value="1" {% if args.get('doctorant')=='1' %}checked{% endif %}>
+          <label for="doctorant" style="margin:0;">Doctorants uniquement</label>
+        </div>
+        <div class="flex gap-1">
+          <button type="submit" class="btn btn-primary">Filtrer</button>
+          <a href="{{ url_for('annuaire.liste') }}" class="btn btn-outline">Réinitialiser</a>
+        </div>
+      </div>
+    </form>
+
+    {% if repartition_pays %}
+    <div class="flex gap-1 mb-3" style="flex-wrap:wrap;align-items:center;">
+      <span class="eyebrow" style="margin:0 .4rem 0 0;">Répartition par pays</span>
+      {% for pays_nom, n in repartition_pays[:6] %}
+      <span class="chip" style="pointer-events:none;">{{ pays_nom }} · {{ n }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Résultats -->
+    <div>
+      <div class="flex-between" style="margin-bottom:1rem;">
+        <span class="text-muted" style="font-size:.85rem;">{{ nb_resultats }} résultat(s)</span>
+        <form method="get" class="flex gap-1" style="margin:0;">
+          {% for k,v in args.items() %}{% if k != 'tri' and k != 'page' %}<input type="hidden" name="{{k}}" value="{{v}}">{% endif %}{% endfor %}
+          <select name="tri" onchange="this.form.submit()" style="margin:0;width:auto;">
+            <option value="promotion" {% if args.get('tri','promotion')=='promotion' %}selected{% endif %}>Trier par promotion</option>
+            <option value="nom" {% if args.get('tri')=='nom' %}selected{% endif %}>Trier par nom</option>
+          </select>
+        </form>
+      </div>
+
+      {% if alumni %}
+      <div class="grid" style="gap:1rem;">
+        {% for a in alumni %}
+        <div class="card alumni-card">
+          <div class="avatar avatar-lg">{{ a.prenoms[0] }}{{ a.nom[0] }}</div>
+          <div style="flex:1;">
+            <div class="flex-between">
+              <div>
+                <strong>{{ a.nom_complet }}</strong>
+                <span class="badge badge-blue" style="margin-left:.4rem;">Promotion {{ a.promotion or '—' }}</span>
+                {% if a.doctorant %}<span class="badge badge-gold">Doctorant</span>{% endif %}
+              </div>
+            </div>
+            <div class="meta">{{ a.fonction_actuelle or 'Fonction non renseignée' }}{% if a.entreprise %} — {{ a.entreprise }}{% endif %}</div>
+            <div class="meta">{{ a.secteur_activite or '' }}{% if a.pays_residence %} · {{ a.ville_residence }}, {{ a.pays_residence }}{% endif %}</div>
+            {% if a.domaine_expertise %}
+            <div class="tag-list mt-1">
+              {% for mot in a.domaine_expertise.split(',')[:4] %}
+              <span class="chip" style="font-size:.72rem;padding:.2rem .6rem;">{{ mot.strip() }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <a href="{{ url_for('annuaire.fiche', user_id=a.id) }}" class="btn btn-outline btn-sm mt-2">Voir la fiche</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p><strong>Aucun résultat</strong> ne correspond aux filtres sélectionnés.</p>
+        <p>Essayez d'élargir votre recherche ou de réinitialiser les filtres.</p>
+      </div>
+      {% endif %}
+
+      {% if nb_pages > 1 %}
+      <div class="flex-between mt-3" style="flex-wrap:wrap;gap:.6rem;">
+        <span class="text-muted" style="font-size:.82rem;">Page {{ page }} sur {{ nb_pages }}</span>
+        <div class="tag-list">
+          {% if page > 1 %}
+          <a class="chip" href="{{ url_for('annuaire.liste', **dict(args, page=page-1)) }}">← Précédent</a>
+          {% endif %}
+          {% for p in range(1, nb_pages + 1) %}
+            {% if p == page %}
+            <span class="chip active">{{ p }}</span>
+            {% elif p == 1 or p == nb_pages or (p >= page - 1 and p <= page + 1) %}
+            <a class="chip" href="{{ url_for('annuaire.liste', **dict(args, page=p)) }}">{{ p }}</a>
+            {% elif p == page - 2 or p == page + 2 %}
+            <span class="chip" style="pointer-events:none;opacity:.5;">…</span>
+            {% endif %}
+          {% endfor %}
+          {% if page < nb_pages %}
+          <a class="chip" href="{{ url_for('annuaire.liste', **dict(args, page=page+1)) }}">Suivant →</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

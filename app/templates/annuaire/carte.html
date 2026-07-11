@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}Carte des anciens — Annuaire DISE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  #carte-anciens { height: 520px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); border: 1px solid var(--glass-border); }
+  .leaflet-popup-content strong { display:block; margin-bottom:.2rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% set slides = [
+  ("brand/equipe_complet.jpg", "Communauté", "La communauté DISE au complet"),
+  ("annonces_activites/Rendez_des_experts_image_famille.jpeg", "Réseau", "Étudiants et alumni réunis à l'ENSEA"),
+  ("activites_passees/Grande_rentree_image_famille_ise3.jpeg", "Promotions", "La Grande Rentrée des ISE — Akwaba"),
+  ("activites_passees/ISEchampionShip2025_image_famille.jpeg", "Cohésion", "ISE Championship 2025"),
+] %}
+{{ page_header_carousel(
+  eyebrow="Annuaire · Vue géographique", title="Carte des anciens",
+  subtitle=nb_alumni_localises ~ " membre(s) localisé(s) dans " ~ nb_pays ~ " pays. Cliquez sur un point pour explorer l'annuaire filtré par pays.",
+  slides=slides
+) }}
+
+<section class="section">
+  <div class="container">
+    <div class="flex-between" style="margin-bottom:1rem;">
+      <a href="{{ url_for('annuaire.liste') }}" class="btn btn-outline btn-sm">← Retour à la liste</a>
+    </div>
+
+    <div id="carte-anciens" data-points='{{ points | tojson }}'></div>
+
+    {% if pays_non_localises %}
+    <div class="card mt-2">
+      <span class="eyebrow">Autres pays représentés</span>
+      <p class="text-muted" style="font-size:.85rem;">Ces pays n'ont pas encore de coordonnées enregistrées dans la plateforme :</p>
+      <div class="tag-list mt-1">
+        {% for nom_pays, effectif in pays_non_localises %}
+        <a href="{{ url_for('annuaire.liste', pays=nom_pays) }}" class="chip">{{ nom_pays }} · {{ effectif }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  (function () {
+    var el = document.getElementById('carte-anciens');
+    if (!el || typeof L === 'undefined') return;
+    var points = JSON.parse(el.dataset.points || '[]');
+    var annuaireUrl = '{{ url_for("annuaire.liste") }}';
+
+    var map = L.map(el).setView([10, 5], 3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    function buildPopup(p) {
+      var wrap = document.createElement('div');
+      var strong = document.createElement('strong');
+      strong.textContent = p.pays;
+      wrap.appendChild(strong);
+      wrap.appendChild(document.createTextNode(p.effectif + ' membre(s)'));
+      wrap.appendChild(document.createElement('br'));
+      var link = document.createElement('a');
+      link.href = annuaireUrl + '?pays=' + encodeURIComponent(p.pays);
+      link.textContent = "Voir dans l'annuaire →";
+      wrap.appendChild(link);
+      return wrap;
+    }
+
+    if (points.length) {
+      var bounds = [];
+      points.forEach(function (p) {
+        var radius = 8 + Math.sqrt(p.effectif) * 6;
+        var marker = L.circleMarker([p.lat, p.lng], {
+          radius: radius,
+          color: '#d4af37',
+          weight: 2,
+          fillColor: '#0f172a',
+          fillOpacity: 0.55,
+        }).addTo(map);
+        marker.bindPopup(buildPopup(p));
+        bounds.push([p.lat, p.lng]);
+      });
+      if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  })();
+</script>
+{% endblock %}

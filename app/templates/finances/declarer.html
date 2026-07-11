@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Déclarer un paiement — DISE{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <span class="eyebrow">Étape 2</span>
+    <h1>Déclarer votre paiement</h1>
+    <p class="text-muted">Effectuez d'abord votre paiement via l'un des <a href="{{ url_for('finances.index') }}">moyens de paiement</a>, puis déclarez-le ici pour que le Trésorier valide la réception des fonds.</p>
+
+    <form method="post" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row">
+        <div><label for="prenoms">Prénoms</label><input type="text" name="prenoms" value="{{ current_user.prenoms if current_user.is_authenticated else '' }}" required></div>
+        <div><label for="nom">Nom</label><input type="text" name="nom" value="{{ current_user.nom if current_user.is_authenticated else '' }}" required></div>
+      </div>
+      <div class="form-row">
+        <div><label for="email">E-mail</label><input type="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}" required></div>
+        <div><label for="promotion">Promotion (si étudiant/alumni)</label><input type="number" name="promotion" value="{{ current_user.promotion if current_user.is_authenticated else '' }}"></div>
+      </div>
+
+      <label for="type_contribution">Type de contribution</label>
+      <select name="type_contribution" required>
+        <option value="cotisation_annuelle">Cotisation annuelle</option>
+        <option value="cotisation_exceptionnelle">Cotisation exceptionnelle</option>
+        <option value="projet">Soutien à un projet spécifique</option>
+        <option value="don_libre">Don libre</option>
+      </select>
+
+      {% if campagnes %}
+      <label for="campagne_id">Campagne concernée (facultatif)</label>
+      <select name="campagne_id">
+        <option value="">Aucune / cotisation générale</option>
+        {% for c in campagnes %}<option value="{{ c.id }}">{{ c.titre }}</option>{% endfor %}
+      </select>
+      {% endif %}
+
+      <div class="form-row">
+        <div><label for="montant">Montant (FCFA)</label><input type="number" name="montant" min="1" step="1" required></div>
+        <div>
+          <label for="moyen_paiement">Moyen de paiement utilisé</label>
+          <select name="moyen_paiement" required>
+            {% for m in moyens_paiement %}<option value="{{ m.nom }}">{{ m.nom }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label for="date_paiement">Date du paiement</label><input type="date" name="date_paiement" required></div>
+        <div><label for="reference_transaction">Référence de la transaction</label><input type="text" name="reference_transaction" placeholder="ID transaction Wave/OM/MTN/Moov"></div>
+      </div>
+
+      <label for="commentaire">Commentaire (facultatif)</label>
+      <textarea name="commentaire" rows="2"></textarea>
+      <p class="help-text">Astuce : joignez une capture d'écran de la transaction par e-mail au Trésorier si besoin — le champ d'upload sera activé en production.</p>
+
+      <button type="submit" class="btn btn-primary btn-block">Envoyer ma déclaration</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

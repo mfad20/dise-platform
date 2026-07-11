@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% from "partials/page_header.html" import page_header_carousel %}
+{% block title %}La DISE — Présentation, Bureau, Historique{% endblock %}
+
+{% block content %}
+{% set slides = [
+  ("ensea/cours_ecole.jpg", "Le campus", "L'ENSEA, Centre d'excellence — Abidjan"),
+  ("brand/equipe_complet.jpg", "Communauté", "La communauté DISE au complet"),
+  ("bureau/president_dise_2025_2026.jpeg", "Gouvernance", "Le Bureau DISE 2025-2026"),
+  ("activites_passees/DISE_AKWABA.jpeg", "Vie de la division", "Grande Rentrée des ISE — Akwaba"),
+] %}
+{{ page_header_carousel(
+  eyebrow="Institution", title="La DISE",
+  subtitle="Division des Ingénieurs Statisticiens Économistes de l'ENSEA Abidjan — une communauté active d'étudiants et d'alumni répartis dans de nombreux pays et secteurs d'activité.",
+  slides=slides
+) }}
+
+<section class="section" id="mission">
+  <div class="container grid grid-2">
+    <div data-aos="fade-right">
+      <span class="eyebrow">Présentation</span>
+      <h2 class="mt-0">Notre mission</h2>
+      <p>La DISE rassemble les étudiants et anciens de la filière Ingénieur Statisticien Économiste : administrations publiques, institutions internationales (BAD, BCEAO, Banque Mondiale…), entreprises privées, ONG, cabinets de conseil et monde académique.</p>
+      <p>La plateforme centralise la mémoire de la division, valorise ses talents, facilite le réseautage entre étudiants et alumni, diffuse les publications, soutient le mentorat et accompagne l'évolution de la communauté sur le long terme.</p>
+    </div>
+    <div data-aos="fade-left" id="historique">
+      <span class="eyebrow">Historique</span>
+      <h2 class="mt-0">Nos jalons</h2>
+      <div class="card">
+        <p style="margin-bottom:.6rem;"><strong>Création de la division</strong> — Naissance de la filière ISE à l'ENSEA Abidjan.</p>
+        <p style="margin-bottom:.6rem;"><strong>Structuration du réseau alumni</strong> — Premières promotions, premiers postes clés occupés dans la sous-région.</p>
+        <p style="margin-bottom:0;"><strong>Aujourd'hui</strong> — Une communauté présente dans plusieurs pays, portée par cette plateforme numérique officielle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PHOTO D'ÉQUIPE ═══ -->
+<section class="section section-alt">
+  <div class="container" data-aos="zoom-in">
+    <div class="section-header" style="margin-bottom:1.5rem;">
+      <span class="section-eyebrow">Ensemble</span>
+      <h2 class="section-title">Toute la <span class="gold">communauté DISE</span></h2>
+    </div>
+    <div class="team-photo-wrap">
+      <img src="{{ url_for('static', filename='img/brand/equipe_complet.jpg') }}" alt="Communauté DISE au complet">
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BUREAU ACTUEL — VRAIES PHOTOS ═══ -->
+<section class="section" id="bureau">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-eyebrow">Gouvernance 2025 – 2026</span>
+      <h2 class="section-title">Le <span class="gold">Bureau</span> actuel</h2>
+      <p class="section-sub">Les membres du Bureau en exercice de la DISE, ENSEA Abidjan.</p>
+    </div>
+    <div class="bureau-grid">
+      {% for membre in bureau_officiel %}
+      <div class="bureau-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+        <div class="bureau-photo">
+          <img src="{{ url_for('static', filename='img/' ~ membre.photo) }}" alt="{{ membre.nom or membre.role }}">
+        </div>
+        {% if membre.nom %}<div class="bureau-nom">{{ membre.nom }}</div>{% endif %}
+        <div class="bureau-role {% if membre.nom %}bureau-role-sub{% endif %}">{{ membre.role }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="help-text text-center mt-3">Photos officielles du Bureau DISE 2025-2026 — autres noms à compléter par le Bureau lors de la mise en ligne.</p>
+  </div>
+</section>
+
+<!-- ═══ ORGANISATION PAR PÔLE ═══ -->
+<section class="section section-alt" id="poles">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-eyebrow">Organisation</span>
+      <h2 class="section-title">Nos <span class="electric">pôles</span> de travail</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card media-card" data-aos="fade-up">
+        <div class="media-thumb media-thumb-portrait"><img src="{{ url_for('static', filename='img/brand/equipe_presidence.jpg') }}" alt="Pôle Présidence"></div>
+        <h3 class="mt-0">Présidence</h3>
+        <p class="text-muted" style="font-size:.88rem;">Coordination générale, représentation institutionnelle de la DISE.</p>
+      </div>
+      <div class="card media-card" data-aos="fade-up" data-aos-delay="80">
+        <div class="media-thumb media-thumb-portrait"><img src="{{ url_for('static', filename='img/brand/equipe_secretaire.jpg') }}" alt="Pôle Secrétariat"></div>
+        <h3 class="mt-0">Secrétariat</h3>
+        <p class="text-muted" style="font-size:.88rem;">Organisation, communication et suivi administratif de la division.</p>
+      </div>
+      <div class="card media-card" data-aos="fade-up" data-aos-delay="160">
+        <div class="media-thumb media-thumb-portrait"><img src="{{ url_for('static', filename='img/brand/equipe_tresorerie.jpg') }}" alt="Pôle Trésorerie"></div>
+        <h3 class="mt-0">Trésorerie</h3>
+        <p class="text-muted" style="font-size:.88rem;">Cotisations, dons et validation des paiements déclarés sur la plateforme.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HALL OF FAME ═══ -->
+<section class="section" id="hall-of-fame">
+  <div class="container">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-eyebrow">Reconnaissance</span>
+      <h2 class="section-title">Hall of <span class="gold">Fame</span></h2>
+    </div>
+    <div class="grid grid-3">
+      {% for a in hall_of_fame %}
+      <div class="card alumni-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+        <div class="avatar avatar-lg">{{ a.prenoms[0] }}{{ a.nom[0] }}</div>
+        <div>
+          <strong>{{ a.nom_complet }}</strong>
+          <div class="meta">{{ a.fonction_actuelle }} — {{ a.entreprise }}</div>
+          <div class="meta">Promotion {{ a.promotion }}</div>
+          <a href="{{ url_for('annuaire.fiche', user_id=a.id) }}" class="btn btn-outline-gold btn-sm mt-1">Voir le profil</a>
+        </div>
+      </div>
+      {% else %}
+      <p class="text-muted">À venir.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

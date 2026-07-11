@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Messages de contact — Administration DISE{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <span class="eyebrow">Back-office</span>
+    <h1>Messages de contact</h1>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    {% if messages %}
+    <div class="grid" style="gap:1rem;">
+      {% for m in messages %}
+      <div class="card">
+        <div class="flex-between">
+          <strong>{{ m.nom }}</strong>
+          {% if m.traite %}<span class="badge badge-success">Traité</span>{% else %}<span class="badge badge-warning">Nouveau</span>{% endif %}
+        </div>
+        <p class="text-muted" style="font-size:.82rem;">{{ m.email }} · {{ m.date_envoi.strftime('%d/%m/%Y %Hh%M') }}</p>
+        <p><strong>{{ m.sujet or 'Sans sujet' }}</strong></p>
+        <p>{{ m.message }}</p>
+        {% if not m.traite %}
+        <form method="post" action="{{ url_for('admin.traiter_message', msg_id=m.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline btn-sm">Marquer comme traité</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>Aucun message reçu.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
