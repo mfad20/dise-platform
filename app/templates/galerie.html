@@ -34,7 +34,7 @@
     <div class="grid grid-4">
       {% for album in albums_supplementaires %}
       <div class="card card-flush media-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
-        <div class="media-thumb" style="margin:0;height:150px;border-radius:0;">
+        <div class="media-thumb media-thumb-portrait" style="margin:0;height:150px;border-radius:0;">
           <img src="{{ url_for('static', filename='img/' ~ album.photo) }}" alt="{{ album.titre }}">
         </div>
         <div style="padding:.85rem;">

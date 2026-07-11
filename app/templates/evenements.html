@@ -39,7 +39,7 @@
     <div class="grid grid-3">
       {% for e in passes %}
       <a href="{{ url_for('main.evenement_detail', evt_id=e.id) }}" class="card media-card" style="text-decoration:none; opacity:.9;">
-        {% if e.affiche_url %}<div class="media-thumb"><img src="{{ url_for('static', filename='img/' ~ e.affiche_url) }}" alt="{{ e.titre }}"></div>{% endif %}
+        {% if e.affiche_url %}<div class="media-thumb media-thumb-portrait"><img src="{{ url_for('static', filename='img/' ~ e.affiche_url) }}" alt="{{ e.titre }}"></div>{% endif %}
         <span class="badge badge-blue">{{ e.categorie }}</span>
         <h3 class="mt-2">{{ e.titre }}</h3>
         <p class="text-muted" style="font-size:.85rem;">{{ e.date_debut | date_fr }}</p>
